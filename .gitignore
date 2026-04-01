@@ -1,5 +1,7 @@
-# Claude Code project settings (local only)
-.claude/
+# Claude Code — local-only files (machine-specific paths and permissions)
+# Custom commands in .claude/commands/ CAN be committed and are shared with the team
+.claude/settings.json
+.claude/settings.local.json
 
 # VS Code workspace settings (optional — remove if you want to commit these)
 .vscode/
