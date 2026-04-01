@@ -1,0 +1,65 @@
+/*
+  Theme system — accent-only tokens.
+  Surfaces & text are NEVER set here; they belong to prefers-color-scheme in globals.css.
+  JS: document.documentElement.setAttribute('data-theme', 'ember')
+*/
+
+:root {
+  /* Default theme fallback (ember) */
+  --accent:      #f97316;
+  --accent2:     #fbbf24;
+  --grad:        linear-gradient(135deg, #f97316, #fbbf24);
+  --accent-soft: rgba(249,115,22,0.14);
+  --accent-glow: rgba(249,115,22,0.25);
+  --tint-1:      rgba(249,115,22,0.06);
+}
+
+/* ── Ember ── warm orange → amber */
+:root[data-theme="ember"] {
+  --accent:      #f97316;
+  --accent2:     #fbbf24;
+  --grad:        linear-gradient(135deg, #f97316, #fbbf24);
+  --accent-soft: rgba(249,115,22,0.14);
+  --accent-glow: rgba(249,115,22,0.25);
+  --tint-1:      rgba(249,115,22,0.06);
+}
+
+/* ── Midnight ── indigo → violet */
+:root[data-theme="midnight"] {
+  --accent:      #6366f1;
+  --accent2:     #a78bfa;
+  --grad:        linear-gradient(135deg, #6366f1, #a78bfa);
+  --accent-soft: rgba(99,102,241,0.14);
+  --accent-glow: rgba(99,102,241,0.28);
+  --tint-1:      rgba(99,102,241,0.06);
+}
+
+/* ── Jade ── emerald → teal */
+:root[data-theme="jade"] {
+  --accent:      #10b981;
+  --accent2:     #34d399;
+  --grad:        linear-gradient(135deg, #10b981, #34d399);
+  --accent-soft: rgba(16,185,129,0.14);
+  --accent-glow: rgba(16,185,129,0.25);
+  --tint-1:      rgba(16,185,129,0.06);
+}
+
+/* ── Rose ── rose → pink */
+:root[data-theme="rose"] {
+  --accent:      #f43f5e;
+  --accent2:     #fb7185;
+  --grad:        linear-gradient(135deg, #f43f5e, #fb7185);
+  --accent-soft: rgba(244,63,94,0.14);
+  --accent-glow: rgba(244,63,94,0.25);
+  --tint-1:      rgba(244,63,94,0.06);
+}
+
+/* ── Azure ── sky → cyan */
+:root[data-theme="azure"] {
+  --accent:      #0ea5e9;
+  --accent2:     #38bdf8;
+  --grad:        linear-gradient(135deg, #0ea5e9, #38bdf8);
+  --accent-soft: rgba(14,165,233,0.14);
+  --accent-glow: rgba(14,165,233,0.25);
+  --tint-1:      rgba(14,165,233,0.06);
+}

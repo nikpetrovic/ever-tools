@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Surface & text tokens — always controlled by system color scheme ─── */
+:root {
+  --bg-base:     #f0f0f4;
+  --bg-panel:    #ffffff;
+  --bg-hover:    rgba(0,0,0,0.04);
+  --bg-selected: rgba(0,0,0,0.06);
+  --text-1:      #1a1a2e;
+  --text-2:      #5a5a7a;
+  --text-3:      #9090b0;
+  --border:      rgba(0,0,0,0.08);
+  --shadow:      0 2px 12px rgba(0,0,0,0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-base:     #0d0d11;
+    --bg-panel:    #141418;
+    --bg-hover:    rgba(255,255,255,0.04);
+    --bg-selected: rgba(255,255,255,0.07);
+    --text-1:      #eeeef4;
+    --text-2:      #8888a8;
+    --text-3:      #55556a;
+    --border:      rgba(255,255,255,0.07);
+    --shadow:      0 2px 16px rgba(0,0,0,0.4);
+  }
+}
+
+/* ─── Base reset ─── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ─── Scrollbars ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* ─── Utility ─── */
+.font-mono { font-family: 'IBM Plex Mono', 'Fira Code', monospace; }
+
+.btn-primary {
+  background: var(--grad);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.85; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-ghost:hover { background: var(--bg-hover); color: var(--text-1); }

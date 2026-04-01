@@ -1,0 +1,15 @@
+# Claude Code project settings (local only)
+.claude/
+
+# VS Code workspace settings (optional — remove if you want to commit these)
+.vscode/
+
+# Tool repos — ignore generated/installed artifacts
+repos/*/node_modules/
+repos/*/out/
+repos/*/dist/
+repos/*/*.log
+
+# OS
+.DS_Store
+*.log
