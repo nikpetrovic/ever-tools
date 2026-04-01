@@ -1,6 +1,7 @@
 import React from 'react'
 import type { NavItem } from '../store/ui'
 import type { EmailRecord } from '../types/email'
+import ThemePicker from './ThemePicker'
 
 interface SidebarProps {
   navItem: NavItem
@@ -47,6 +48,18 @@ export default function Sidebar({ navItem, emails, onNavigate }: SidebarProps): 
           </svg>
         }
       />
+
+      <div style={{ flex: 1 }} />
+
+      <div>
+        <div style={{ borderTop: '1px solid var(--border)', margin: '0 2px 10px' }} />
+        <p style={{ margin: '0 0 8px', fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'center' }}>
+          Theme
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 8 }}>
+          <ThemePicker />
+        </div>
+      </div>
     </aside>
   )
 }

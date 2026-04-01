@@ -9,6 +9,7 @@ export const IPC = {
   SMTP_STATUS:      'smtp:status',
   NEW_EMAIL:        'emails:new',
   SMTP_RESTART:     'smtp:restart',
+  SMTP_STOP:        'smtp:stop',
   TRAY_BADGE:       'tray:badge',
 } as const
 

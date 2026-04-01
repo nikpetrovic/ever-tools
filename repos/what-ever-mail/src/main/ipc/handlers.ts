@@ -2,7 +2,7 @@ import { ipcMain } from 'electron'
 import { IPC } from './channels'
 import { listEmails, getEmail, deleteEmail, clearEmails, markRead } from '../db/emails'
 import { getSetting, setSetting } from '../settings'
-import { getSmtpStatus, restartSmtpServer } from '../smtp/server'
+import { getSmtpStatus, restartSmtpServer, stopSmtpServer } from '../smtp/server'
 import { updateTrayBadge } from '../tray'
 import type { BrowserWindow } from 'electron'
 
@@ -34,6 +34,10 @@ export function registerIpcHandlers(mainWindow?: BrowserWindow): void {
   ipcMain.handle(IPC.SMTP_RESTART, (_event, port: number) => {
     setSetting('smtpPort', port)
     if (mainWindow) restartSmtpServer(port, mainWindow)
+  })
+
+  ipcMain.handle(IPC.SMTP_STOP, () => {
+    stopSmtpServer()
   })
 
   ipcMain.handle(IPC.TRAY_BADGE, (_event, count: number) => {

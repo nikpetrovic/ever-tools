@@ -18,6 +18,7 @@ declare global {
       smtp: {
         getStatus: () => Promise<{ running: boolean; port: number }>
         restart: (port: number) => Promise<void>
+        stop: () => Promise<void>
       }
       tray: {
         setBadge: (count: number) => Promise<void>

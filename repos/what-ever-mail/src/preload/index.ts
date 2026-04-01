@@ -26,6 +26,7 @@ contextBridge.exposeInMainWorld('api', {
     getStatus: (): Promise<{ running: boolean; port: number }> =>
       ipcRenderer.invoke(IPC.SMTP_STATUS),
     restart: (port: number): Promise<void> => ipcRenderer.invoke(IPC.SMTP_RESTART, port),
+    stop: (): Promise<void> => ipcRenderer.invoke(IPC.SMTP_STOP),
   },
 
   tray: {

@@ -10,18 +10,33 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps): React.JS
   const [port, setPort] = useState(1025)
   const [smtpStatus, setSmtpStatus] = useState<{ running: boolean; port: number } | null>(null)
   const [restarting, setRestarting] = useState(false)
+  const [stopping, setStopping] = useState(false)
 
   useEffect(() => {
     window.api.settings.get<number>('smtpPort').then((p) => setPort(p ?? 1025))
     window.api.smtp.getStatus().then(setSmtpStatus)
   }, [])
 
+  function broadcastStatus(status: { running: boolean; port: number }): void {
+    window.dispatchEvent(new CustomEvent('smtp-status-changed', { detail: status }))
+  }
+
   async function handleRestartSmtp(): Promise<void> {
     setRestarting(true)
     await window.api.smtp.restart(port)
     const status = await window.api.smtp.getStatus()
     setSmtpStatus(status)
+    broadcastStatus(status)
     setRestarting(false)
+  }
+
+  async function handleStopSmtp(): Promise<void> {
+    setStopping(true)
+    await window.api.smtp.stop()
+    const status = await window.api.smtp.getStatus()
+    setSmtpStatus(status)
+    broadcastStatus(status)
+    setStopping(false)
   }
 
   async function handleClearAll(): Promise<void> {
@@ -82,7 +97,8 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps): React.JS
         <div style={{ padding: '20px' }}>
           {/* SMTP Port */}
           <Section label="SMTP Server">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            {/* Port + status indicator row */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
               <label style={{ fontSize: 12, color: 'var(--text-2)', width: 36 }}>Port</label>
               <input
                 type="number"
@@ -102,25 +118,53 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps): React.JS
                   outline: 'none',
                 }}
               />
+              {smtpStatus && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    border: `1px solid ${smtpStatus.running ? '#10b981' : '#ef4444'}`,
+                    borderRadius: 20,
+                    padding: '3px 8px',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    color: '#888',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      background: smtpStatus.running ? '#10b981' : '#ef4444',
+                      display: 'inline-block',
+                      flexShrink: 0,
+                    }}
+                  />
+                  {smtpStatus.running ? 'LISTENING' : 'STOPPED'}
+                </div>
+              )}
+            </div>
+            {/* Action buttons row */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 44 }}>
               <button
                 className="btn-primary"
                 onClick={handleRestartSmtp}
-                disabled={restarting}
-                style={{ opacity: restarting ? 0.6 : 1 }}
+                disabled={restarting || stopping}
+                style={{ opacity: restarting ? 0.6 : 1, minWidth: 72, textAlign: 'center' }}
               >
-                {restarting ? 'Restarting…' : 'Restart'}
+                {restarting ? 'Starting…' : smtpStatus?.running ? 'Restart' : 'Start'}
               </button>
-              {smtpStatus && (
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: smtpStatus.running ? 'var(--accent, #10b981)' : '#ef4444',
-                    marginLeft: 4,
-                  }}
-                >
-                  ● {smtpStatus.running ? `listening :${smtpStatus.port}` : 'stopped'}
-                </span>
-              )}
+              <button
+                className="btn-ghost"
+                onClick={handleStopSmtp}
+                disabled={stopping || restarting || !smtpStatus?.running}
+                style={{ opacity: (stopping || !smtpStatus?.running) ? 0.5 : 1, minWidth: 72, textAlign: 'center' }}
+              >
+                {stopping ? 'Stopping…' : 'Stop'}
+              </button>
             </div>
           </Section>
 
