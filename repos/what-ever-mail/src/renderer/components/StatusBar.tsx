@@ -30,32 +30,9 @@ export default function StatusBar({ emailCount }: StatusBarProps): React.JSX.Ele
   }, [])
 
   return (
-    <footer
-      style={{
-        height: 26,
-        background: 'var(--bg-base)',
-        borderTop: '1px solid var(--border)',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 14px',
-        gap: 16,
-        fontSize: 11,
-        color: 'var(--text-3)',
-        flexShrink: 0,
-        userSelect: 'none',
-      }}
-    >
-      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-        <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: smtpRunning ? '#10b981' : '#ef4444',
-            display: 'inline-block',
-            flexShrink: 0,
-          }}
-        />
+    <footer className="h-[26px] bg-surface-base border-t border-border flex items-center px-[14px] gap-4 text-[11px] text-fg-3 shrink-0 select-none">
+      <span className="flex items-center gap-[5px]">
+        <span className={`w-[6px] h-[6px] rounded-full inline-block shrink-0 ${smtpRunning ? 'bg-emerald-500' : 'bg-red-500'}`} />
         SMTP :{smtpPort} {smtpRunning ? 'listening' : 'stopped'}
       </span>
       <span>{emailCount} email{emailCount !== 1 ? 's' : ''}</span>

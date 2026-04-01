@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 import type { EmailRecord } from '../../types/email'
 
 interface EmailRowProps {
@@ -42,95 +43,37 @@ export default function EmailRow({ email, selected, onSelect }: EmailRowProps): 
   return (
     <div
       onClick={onSelect}
-      style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: 10,
-        padding: '10px 12px',
-        cursor: 'pointer',
-        background: selected
-          ? 'var(--accent-soft, rgba(249,115,22,0.1))'
-          : 'transparent',
-        borderLeft: selected
-          ? '3px solid var(--accent, #f97316)'
-          : '3px solid transparent',
-        transition: 'background 0.12s',
-        position: 'relative',
-      }}
-      onMouseEnter={(e) => {
-        if (!selected) e.currentTarget.style.background = 'var(--bg-hover)'
-      }}
-      onMouseLeave={(e) => {
-        if (!selected) e.currentTarget.style.background = 'transparent'
-      }}
+      className={clsx(
+        'flex items-start gap-[10px] px-3 py-[10px] cursor-pointer border-l-[3px] transition-[background] duration-[120ms] relative',
+        selected
+          ? 'bg-accent-soft border-accent'
+          : 'bg-transparent border-transparent hover:bg-surface-hover'
+      )}
     >
       {/* Avatar */}
       <div
-        style={{
-          width: 34,
-          height: 34,
-          borderRadius: '50%',
-          background: selected
-            ? 'var(--grad, #f97316)'
-            : avatarColor,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#fff',
-          fontSize: 12,
-          fontWeight: 600,
-          flexShrink: 0,
-          transition: 'background 0.2s',
-        }}
+        className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0 transition-[background] duration-200"
+        style={{ background: selected ? 'var(--grad, #f97316)' : avatarColor }}
       >
         {initials}
       </div>
 
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-          <span
-            style={{
-              fontSize: 12,
-              fontWeight: email.read ? 400 : 600,
-              color: 'var(--text-1)',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              flex: 1,
-            }}
-          >
+      <div className="flex-1 min-w-0">
+        <div className="flex justify-between items-center gap-2">
+          <span className={clsx('text-xs text-fg-1 overflow-hidden text-ellipsis whitespace-nowrap flex-1', email.read ? 'font-normal' : 'font-semibold')}>
             {email.from.replace(/<[^>]+>/, '').trim() || email.from}
           </span>
-          <span style={{ fontSize: 10, color: 'var(--text-3)', flexShrink: 0 }}>
+          <span className="text-[10px] text-fg-3 shrink-0">
             {formatTime(email.createdAt)}
           </span>
         </div>
 
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: email.read ? 400 : 500,
-            color: email.read ? 'var(--text-2)' : 'var(--text-1)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            marginTop: 1,
-          }}
-        >
+        <div className={clsx('text-xs overflow-hidden text-ellipsis whitespace-nowrap mt-[1px]', email.read ? 'font-normal text-fg-2' : 'font-medium text-fg-1')}>
           {email.subject}
         </div>
 
         {preview && (
-          <div
-            style={{
-              fontSize: 11,
-              color: 'var(--text-3)',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              marginTop: 1,
-            }}
-          >
+          <div className="text-[11px] text-fg-3 overflow-hidden text-ellipsis whitespace-nowrap mt-[1px]">
             {preview}
           </div>
         )}
@@ -138,16 +81,7 @@ export default function EmailRow({ email, selected, onSelect }: EmailRowProps): 
 
       {/* Unread dot */}
       {!email.read && (
-        <div
-          style={{
-            width: 7,
-            height: 7,
-            borderRadius: '50%',
-            background: 'var(--accent, #f97316)',
-            flexShrink: 0,
-            marginTop: 5,
-          }}
-        />
+        <div className="w-[7px] h-[7px] rounded-full bg-accent shrink-0 mt-[5px]" />
       )}
     </div>
   )

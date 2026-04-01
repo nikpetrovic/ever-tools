@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 import type { NavItem } from '../store/ui'
 import type { EmailRecord } from '../types/email'
 import ThemePicker from './ThemePicker'
@@ -13,18 +14,7 @@ export default function Sidebar({ navItem, emails, onNavigate }: SidebarProps): 
   const unreadCount = emails.filter((e) => !e.read).length
 
   return (
-    <aside
-      style={{
-        width: 176,
-        background: 'var(--bg-base)',
-        borderRight: '1px solid var(--border)',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '12px 8px',
-        flexShrink: 0,
-        gap: 2,
-      }}
-    >
+    <aside className="w-[176px] bg-surface-base border-r border-border flex flex-col py-3 px-2 shrink-0 gap-[2px]">
       <NavButton
         label="Inbox"
         badge={unreadCount > 0 ? unreadCount : undefined}
@@ -49,14 +39,14 @@ export default function Sidebar({ navItem, emails, onNavigate }: SidebarProps): 
         }
       />
 
-      <div style={{ flex: 1 }} />
+      <div className="flex-1" />
 
       <div>
-        <div style={{ borderTop: '1px solid var(--border)', margin: '0 2px 0' }} />
-        <p style={{ margin: '0 0 12px', paddingTop: 16, fontSize: 16, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.16em', textAlign: 'center' }}>
+        <div className="border-t border-border mx-[2px]" />
+        <p className="m-0 mb-3 pt-4 text-[16px] font-semibold text-fg-3 uppercase tracking-[0.16em] text-center">
           Theme
         </p>
-        <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 16 }}>
+        <div className="flex justify-center pb-4">
           <ThemePicker />
         </div>
       </div>
@@ -76,51 +66,17 @@ function NavButton({ label, active, badge, icon, onClick }: NavButtonProps): Rea
   return (
     <button
       onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '7px 10px',
-        borderRadius: 8,
-        border: 'none',
-        background: active ? 'var(--accent-soft, rgba(249,115,22,0.12))' : 'transparent',
-        color: active ? 'var(--accent, #f97316)' : 'var(--text-2)',
-        fontFamily: 'inherit',
-        fontSize: 13,
-        fontWeight: active ? 600 : 400,
-        cursor: 'pointer',
-        width: '100%',
-        textAlign: 'left',
-        transition: 'background 0.15s, color 0.15s',
-      }}
-      onMouseEnter={(e) => {
-        if (!active) {
-          e.currentTarget.style.background = 'var(--bg-hover)'
-          e.currentTarget.style.color = 'var(--text-1)'
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!active) {
-          e.currentTarget.style.background = 'transparent'
-          e.currentTarget.style.color = 'var(--text-2)'
-        }
-      }}
+      className={clsx(
+        'flex items-center gap-2 py-[7px] px-[10px] rounded-lg border-0 text-[13px] cursor-pointer w-full text-left transition-[background,color] duration-150',
+        active
+          ? 'bg-accent-soft text-accent font-semibold'
+          : 'bg-transparent text-fg-2 font-normal hover:bg-surface-hover hover:text-fg-1'
+      )}
     >
       {icon}
-      <span style={{ flex: 1 }}>{label}</span>
+      <span className="flex-1">{label}</span>
       {badge !== undefined && (
-        <span
-          style={{
-            background: 'var(--grad, #f97316)',
-            color: '#fff',
-            borderRadius: 10,
-            padding: '1px 6px',
-            fontSize: 11,
-            fontWeight: 600,
-            minWidth: 18,
-            textAlign: 'center',
-          }}
-        >
+        <span className="bg-grad text-white rounded-[10px] px-[6px] py-px text-[11px] font-semibold min-w-[18px] text-center">
           {badge}
         </span>
       )}

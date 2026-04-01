@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import clsx from 'clsx'
 
 interface SmtpStatus {
   running: boolean
@@ -30,67 +31,28 @@ export default function TitleBar({ onSettingsClick }: TitleBarProps): React.JSX.
 
   return (
     <header
-      style={{
-        height: 44,
-        background: 'var(--bg-panel)',
-        borderBottom: '1px solid var(--accent, #f97316)',
-        display: 'flex',
-        alignItems: 'center',
-        padding: isMac ? '0 16px 0 80px' : '0 16px',
-        gap: 12,
-        WebkitAppRegion: 'drag',
-        flexShrink: 0,
-        userSelect: 'none',
-        position: 'relative',
-      } as React.CSSProperties}
+      className={clsx(
+        'h-11 bg-surface-panel border-b border-accent flex items-center gap-3 shrink-0 select-none relative app-drag',
+        isMac ? 'pl-20 pr-4' : 'px-4'
+      )}
     >
       {/* Wordmark — horizontally centered */}
-      <span
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontWeight: 700,
-          fontSize: 15,
-          letterSpacing: '-0.4px',
-          whiteSpace: 'nowrap',
-          pointerEvents: 'none',
-        } as React.CSSProperties}
-      >
-        <span style={{ color: 'var(--text-1)' }}>What </span>
-        <span style={{ color: 'var(--accent, #f97316)' }}>Ever</span>
-        <span style={{ color: 'var(--text-1)' }}> Mail</span>
+      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-bold text-[15px] tracking-[-0.4px] whitespace-nowrap pointer-events-none">
+        <span className="text-fg-1">What </span>
+        <span className="text-accent">Ever</span>
+        <span className="text-fg-1"> Mail</span>
       </span>
 
-      <div style={{ flex: 1 }} />
+      <div className="flex-1" />
 
       {/* SMTP status */}
       <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 5,
-          border: `1px solid ${smtp.running ? '#10b981' : '#ef4444'}`,
-          borderRadius: 20,
-          padding: '3px 10px',
-          fontSize: 11,
-          fontWeight: 500,
-          color: '#888',
-          letterSpacing: '0.04em',
-          WebkitAppRegion: 'no-drag',
-        } as React.CSSProperties}
+        className={clsx(
+          'flex items-center gap-[5px] rounded-[20px] px-[10px] py-[3px] text-[11px] font-medium text-[#888] tracking-[0.04em] app-no-drag border',
+          smtp.running ? 'border-emerald-500' : 'border-red-500'
+        )}
       >
-        <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: smtp.running ? '#10b981' : '#ef4444',
-            display: 'inline-block',
-            flexShrink: 0,
-          }}
-        />
+        <span className={`w-[6px] h-[6px] rounded-full inline-block shrink-0 ${smtp.running ? 'bg-emerald-500' : 'bg-red-500'}`} />
         SMTP :{smtp.port}
       </div>
 
@@ -98,20 +60,7 @@ export default function TitleBar({ onSettingsClick }: TitleBarProps): React.JSX.
       <button
         onClick={onSettingsClick}
         title="Settings"
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          color: 'var(--text-2)',
-          padding: 4,
-          borderRadius: 6,
-          display: 'flex',
-          alignItems: 'center',
-          WebkitAppRegion: 'no-drag',
-          transition: 'color 0.15s',
-        } as React.CSSProperties}
-        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-1)')}
-        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-2)')}
+        className="bg-transparent border-0 cursor-pointer text-fg-2 p-1 rounded-md flex items-center app-no-drag transition-colors duration-150 hover:text-fg-1"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="3" />

@@ -1,4 +1,5 @@
 import React from 'react'
+import clsx from 'clsx'
 import type { EmailRecord } from '../../types/email'
 import { useDeleteEmail } from '../../hooks/useEmails'
 
@@ -32,51 +33,18 @@ export default function PreviewHeader({
   onDelete,
 }: PreviewHeaderProps): React.JSX.Element {
   return (
-    <div
-      style={{
-        borderBottom: '1px solid var(--border)',
-        background: 'var(--bg-panel)',
-        flexShrink: 0,
-      }}
-    >
+    <div className="border-b border-border bg-surface-panel shrink-0">
       {/* Meta section */}
-      <div style={{ padding: '14px 20px 10px' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            gap: 12,
-            marginBottom: 10,
-          }}
-        >
-          <h2
-            style={{
-              margin: 0,
-              fontSize: 15,
-              fontWeight: 600,
-              color: 'var(--text-1)',
-              lineHeight: 1.3,
-            }}
-          >
+      <div className="pt-[14px] px-5 pb-[10px]">
+        <div className="flex justify-between items-start gap-3 mb-[10px]">
+          <h2 className="m-0 text-[15px] font-semibold text-fg-1 leading-[1.3]">
             {email.subject || '(no subject)'}
           </h2>
 
           <button
             onClick={onDelete}
             title="Delete email"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--text-3)',
-              padding: 4,
-              borderRadius: 6,
-              flexShrink: 0,
-              transition: 'color 0.15s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-3)')}
+            className="bg-transparent border-0 cursor-pointer text-fg-3 p-1 rounded-md shrink-0 transition-colors duration-150 hover:text-red-500"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="3 6 5 6 21 6"/>
@@ -85,50 +53,36 @@ export default function PreviewHeader({
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '48px 1fr', rowGap: 2, fontSize: 12, color: 'var(--text-2)' }}>
-          <span style={{ fontWeight: 500 }}>From</span>
-          <span style={{ color: 'var(--text-1)' }}>{email.from}</span>
-          <span style={{ fontWeight: 500 }}>To</span>
+        <div className="grid grid-cols-[48px_1fr] gap-y-[2px] text-xs text-fg-2">
+          <span className="font-medium">From</span>
+          <span className="text-fg-1">{email.from}</span>
+          <span className="font-medium">To</span>
           <span>{email.to.join(', ')}</span>
           {email.cc.length > 0 && (
             <>
-              <span style={{ fontWeight: 500 }}>Cc</span>
+              <span className="font-medium">Cc</span>
               <span>{email.cc.join(', ')}</span>
             </>
           )}
-          <span style={{ fontWeight: 500 }}>Date</span>
+          <span className="font-medium">Date</span>
           <span>{formatDate(email.date)}</span>
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', padding: '0 20px', gap: 4 }}>
+      <div className="flex px-5 gap-1">
         {TABS.map((tab) => {
           const active = tab.id === activeTab
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              style={{
-                background: 'none',
-                border: 'none',
-                borderBottom: active
-                  ? '2px solid var(--accent, #f97316)'
-                  : '2px solid transparent',
-                padding: '6px 10px 8px',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                fontSize: 12,
-                fontWeight: active ? 600 : 400,
-                color: active ? 'var(--accent, #f97316)' : 'var(--text-2)',
-                transition: 'color 0.15s, border-color 0.15s',
-              }}
-              onMouseEnter={(e) => {
-                if (!active) e.currentTarget.style.color = 'var(--text-1)'
-              }}
-              onMouseLeave={(e) => {
-                if (!active) e.currentTarget.style.color = 'var(--text-2)'
-              }}
+              className={clsx(
+                'bg-transparent border-x-0 border-t-0 border-b-2 cursor-pointer pt-[6px] px-[10px] pb-2 text-xs transition-[color,border-color] duration-150',
+                active
+                  ? 'font-semibold text-accent border-accent'
+                  : 'font-normal text-fg-2 border-transparent hover:text-fg-1'
+              )}
             >
               {tab.label}
             </button>

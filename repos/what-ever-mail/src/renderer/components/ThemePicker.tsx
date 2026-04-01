@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import clsx from 'clsx'
 
 type Theme = 'ember' | 'midnight' | 'jade' | 'rose' | 'azure'
 
@@ -28,24 +29,20 @@ export default function ThemePicker(): React.JSX.Element {
   }
 
   return (
-    <div style={{ display: 'flex', gap: 8, padding: '0 4px' }}>
+    <div className="flex gap-2 px-1">
       {THEMES.map(({ id, color, label }) => (
         <button
           key={id}
           title={label}
           onClick={() => handleSelect(id)}
+          className={clsx('w-[18px] h-[18px] rounded-full cursor-pointer p-0 transition-transform duration-150', {
+            'scale-[1.2]': active === id,
+          })}
           style={{
-            width: 18,
-            height: 18,
-            borderRadius: '50%',
             background: color,
             border: active === id ? `2px solid ${color}` : '2px solid transparent',
             outline: active === id ? `2px solid var(--border)` : 'none',
             outlineOffset: 2,
-            cursor: 'pointer',
-            padding: 0,
-            transition: 'transform 0.15s',
-            transform: active === id ? 'scale(1.2)' : 'scale(1)',
           }}
         />
       ))}

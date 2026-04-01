@@ -17,17 +17,7 @@ export default function Preview({ email }: PreviewProps): React.JSX.Element {
 
   if (!email) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--text-3)',
-          flexDirection: 'column',
-          gap: 10,
-        }}
-      >
+      <div className="flex-1 flex items-center justify-center text-fg-3 flex-col gap-[10px]">
         <svg
           width="40"
           height="40"
@@ -37,12 +27,12 @@ export default function Preview({ email }: PreviewProps): React.JSX.Element {
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ opacity: 0.3 }}
+          className="opacity-30"
         >
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
           <polyline points="22,6 12,13 2,6"/>
         </svg>
-        <p style={{ margin: 0, fontSize: 12 }}>Select an email to preview</p>
+        <p className="m-0 text-xs">Select an email to preview</p>
       </div>
     )
   }
@@ -56,16 +46,7 @@ export default function Preview({ email }: PreviewProps): React.JSX.Element {
       : activeTab
 
   return (
-    <div
-      style={{
-        flex: 1,
-        background: 'var(--bg-panel)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        minWidth: 0,
-      }}
-    >
+    <div className="flex-1 bg-surface-panel flex flex-col overflow-hidden min-w-0">
       <PreviewHeader
         email={email}
         activeTab={effectiveTab}
@@ -73,7 +54,7 @@ export default function Preview({ email }: PreviewProps): React.JSX.Element {
         onDelete={() => deleteEmail(email.id)}
       />
 
-      <div style={{ flex: 1, overflow: 'hidden' }}>
+      <div className="flex-1 overflow-hidden">
         {effectiveTab === 'html' && email.html && <HtmlView html={email.html} />}
         {effectiveTab === 'text' && <TextView text={email.text ?? '(no plain text)'} />}
         {effectiveTab === 'source' && <SourceView raw={email.raw} />}

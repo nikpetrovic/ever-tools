@@ -6,20 +6,7 @@ interface TextViewProps {
 
 export default function TextView({ text }: TextViewProps): React.JSX.Element {
   return (
-    <pre
-      style={{
-        margin: 0,
-        padding: 20,
-        fontFamily: 'IBM Plex Mono, Fira Code, monospace',
-        fontSize: 12,
-        lineHeight: 1.7,
-        color: 'var(--text-1)',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word',
-        overflowY: 'auto',
-        height: '100%',
-      }}
-    >
+    <pre className="m-0 p-5 font-mono text-xs leading-[1.7] text-fg-1 whitespace-pre-wrap break-words overflow-y-auto h-full">
       {text}
     </pre>
   )
