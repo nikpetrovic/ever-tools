@@ -8,6 +8,11 @@
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "package": "npm run build && electron-builder",
+    "package:win": "npm run build && electron-builder --win --x64",
+    "package:mac:intel": "npm run build && electron-builder --mac --x64",
+    "package:mac:arm": "npm run build && electron-builder --mac --arm64",
+    "package:mac:universal": "npm run build && electron-builder --mac --universal",
+    "package:linux": "npm run build && electron-builder --linux --x64",
     "generate-icons": "node scripts/generate-icons.mjs",
     "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
