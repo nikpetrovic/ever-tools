@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import clsx from 'clsx'
 import { useClearEmails } from '../hooks/useEmails'
 
 interface SettingsPanelProps {
@@ -46,122 +47,60 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps): React.JS
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.4)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 100,
-      }}
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div
-        style={{
-          background: 'var(--bg-panel)',
-          borderRadius: 12,
-          border: '1px solid var(--border)',
-          width: 400,
-          boxShadow: 'var(--shadow)',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="bg-surface-panel rounded-xl border border-border w-[400px] shadow-panel overflow-hidden">
         {/* Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '16px 20px',
-            borderBottom: '1px solid var(--border)',
-          }}
-        >
-          <h2 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Settings</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <h2 className="m-0 text-sm font-semibold">Settings</h2>
           <button
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--text-2)',
-              fontSize: 18,
-              lineHeight: 1,
-              padding: 2,
-            }}
+            className="bg-transparent border-0 cursor-pointer text-fg-2 text-lg leading-none p-[2px]"
           >
             ×
           </button>
         </div>
 
-        <div style={{ padding: '20px' }}>
+        <div className="p-5">
           {/* SMTP Port */}
           <Section label="SMTP Server">
             {/* Port + status indicator row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <label style={{ fontSize: 12, color: 'var(--text-2)', width: 36 }}>Port</label>
+            <div className="flex items-center gap-2 mb-[10px]">
+              <label className="text-xs text-fg-2 w-9">Port</label>
               <input
                 type="number"
                 value={port}
                 min={1}
                 max={65535}
                 onChange={(e) => setPort(Number(e.target.value))}
-                style={{
-                  width: 80,
-                  background: 'var(--bg-hover)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 6,
-                  padding: '4px 8px',
-                  fontFamily: 'IBM Plex Mono, monospace',
-                  fontSize: 12,
-                  color: 'var(--text-1)',
-                  outline: 'none',
-                }}
+                className="w-20 bg-surface-hover border border-border rounded-md px-2 py-1 font-mono text-xs text-fg-1 outline-none"
               />
               {smtpStatus && (
                 <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 5,
-                    border: `1px solid ${smtpStatus.running ? '#10b981' : '#ef4444'}`,
-                    borderRadius: 20,
-                    padding: '3px 8px',
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: '#888',
-                    letterSpacing: '0.04em',
-                  }}
+                  className={clsx(
+                    'flex items-center gap-[5px] rounded-[20px] px-2 py-[3px] text-[11px] font-medium text-[#888] tracking-[0.04em] border',
+                    smtpStatus.running ? 'border-emerald-500' : 'border-red-500'
+                  )}
                 >
-                  <span
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: '50%',
-                      background: smtpStatus.running ? '#10b981' : '#ef4444',
-                      display: 'inline-block',
-                      flexShrink: 0,
-                    }}
-                  />
+                  <span className={`w-[6px] h-[6px] rounded-full inline-block shrink-0 ${smtpStatus.running ? 'bg-emerald-500' : 'bg-red-500'}`} />
                   {smtpStatus.running ? 'LISTENING' : 'STOPPED'}
                 </div>
               )}
             </div>
             {/* Action buttons row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 44 }}>
+            <div className="flex items-center gap-2 ml-11">
               <button
-                className="btn-primary"
+                className={clsx('btn-primary min-w-[72px] text-center', { 'opacity-60': restarting })}
                 onClick={handleRestartSmtp}
                 disabled={restarting || stopping}
-                style={{ opacity: restarting ? 0.6 : 1, minWidth: 72, textAlign: 'center' }}
               >
                 {restarting ? 'Starting…' : smtpStatus?.running ? 'Restart' : 'Start'}
               </button>
               <button
-                className="btn-ghost"
+                className={clsx('btn-ghost min-w-[72px] text-center', { 'opacity-50': stopping || !smtpStatus?.running })}
                 onClick={handleStopSmtp}
                 disabled={stopping || restarting || !smtpStatus?.running}
-                style={{ opacity: (stopping || !smtpStatus?.running) ? 0.5 : 1, minWidth: 72, textAlign: 'center' }}
               >
                 {stopping ? 'Stopping…' : 'Stop'}
               </button>
@@ -169,14 +108,13 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps): React.JS
           </Section>
 
           {/* Divider */}
-          <div style={{ borderTop: '1px solid var(--border)', margin: '16px 0' }} />
+          <div className="border-t border-border my-4" />
 
           {/* Data */}
           <Section label="Data">
             <button
-              className="btn-ghost"
+              className="btn-ghost text-red-500 border-red-500/30"
               onClick={handleClearAll}
-              style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)' }}
             >
               Clear all emails
             </button>
@@ -189,8 +127,8 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps): React.JS
 
 function Section({ label, children }: { label: string; children: React.ReactNode }): React.JSX.Element {
   return (
-    <div style={{ marginBottom: 4 }}>
-      <p style={{ margin: '0 0 10px', fontSize: 11, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+    <div className="mb-1">
+      <p className="m-0 mb-[10px] text-[11px] font-semibold text-fg-3 uppercase tracking-[0.06em]">
         {label}
       </p>
       {children}

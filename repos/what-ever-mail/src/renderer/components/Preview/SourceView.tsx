@@ -6,20 +6,7 @@ interface SourceViewProps {
 
 export default function SourceView({ raw }: SourceViewProps): React.JSX.Element {
   return (
-    <pre
-      style={{
-        margin: 0,
-        padding: 20,
-        fontFamily: 'IBM Plex Mono, Fira Code, monospace',
-        fontSize: 11,
-        lineHeight: 1.65,
-        color: 'var(--text-2)',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-all',
-        overflowY: 'auto',
-        height: '100%',
-      }}
-    >
+    <pre className="m-0 p-5 font-mono text-[11px] leading-[1.65] text-fg-2 whitespace-pre-wrap break-all overflow-y-auto h-full">
       {raw}
     </pre>
   )

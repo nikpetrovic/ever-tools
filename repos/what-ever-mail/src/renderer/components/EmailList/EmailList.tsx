@@ -48,20 +48,10 @@ export default function EmailList({
   }
 
   return (
-    <div
-      style={{
-        width: 280,
-        background: 'var(--bg-panel)',
-        borderRight: '1px solid var(--border)',
-        display: 'flex',
-        flexDirection: 'column',
-        flexShrink: 0,
-        overflow: 'hidden',
-      }}
-    >
+    <div className="w-[280px] bg-surface-panel border-r border-border flex flex-col shrink-0 overflow-hidden">
       <SearchBox value={searchQuery} onChange={onSearchChange} />
 
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
           <EmptyState hasSearch={searchQuery.length > 0} />
         ) : (
@@ -81,19 +71,7 @@ export default function EmailList({
 
 function EmptyState({ hasSearch }: { hasSearch: boolean }): React.JSX.Element {
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        padding: 32,
-        gap: 12,
-        color: 'var(--text-3)',
-        textAlign: 'center',
-      }}
-    >
+    <div className="flex flex-col items-center justify-center h-full p-8 gap-3 text-fg-3 text-center">
       <svg
         width="36"
         height="36"
@@ -103,28 +81,21 @@ function EmptyState({ hasSearch }: { hasSearch: boolean }): React.JSX.Element {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ opacity: 0.4 }}
+        className="opacity-40"
       >
         <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
         <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
       </svg>
       {hasSearch ? (
-        <p style={{ fontSize: 12, margin: 0 }}>No emails match your search</p>
+        <p className="text-xs m-0">No emails match your search</p>
       ) : (
         <>
-          <p style={{ fontSize: 12, margin: 0, fontWeight: 500, color: 'var(--text-2)' }}>
+          <p className="text-xs m-0 font-medium text-fg-2">
             No emails yet
           </p>
-          <p style={{ fontSize: 11, margin: 0 }}>
+          <p className="text-[11px] m-0">
             Point your app's SMTP config at{' '}
-            <code
-              style={{
-                fontFamily: 'IBM Plex Mono, monospace',
-                background: 'var(--bg-hover)',
-                padding: '1px 5px',
-                borderRadius: 4,
-              }}
-            >
+            <code className="font-mono bg-surface-hover px-[5px] py-px rounded">
               localhost:1025
             </code>
           </p>

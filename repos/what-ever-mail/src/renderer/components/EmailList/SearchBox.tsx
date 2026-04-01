@@ -7,24 +7,8 @@ interface SearchBoxProps {
 
 export default function SearchBox({ value, onChange }: SearchBoxProps): React.JSX.Element {
   return (
-    <div
-      style={{
-        padding: '10px 12px 8px',
-        borderBottom: '1px solid var(--border)',
-        flexShrink: 0,
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          background: 'var(--bg-hover)',
-          borderRadius: 8,
-          padding: '6px 10px',
-          border: '1px solid var(--border)',
-        }}
-      >
+    <div className="pt-[10px] px-3 pb-2 border-b border-border shrink-0">
+      <div className="flex items-center gap-2 bg-surface-hover rounded-lg px-[10px] py-[6px] border border-border">
         <svg
           width="13"
           height="13"
@@ -34,7 +18,7 @@ export default function SearchBox({ value, onChange }: SearchBoxProps): React.JS
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ flexShrink: 0 }}
+          className="shrink-0"
         >
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -44,28 +28,12 @@ export default function SearchBox({ value, onChange }: SearchBoxProps): React.JS
           placeholder="Search…"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          style={{
-            background: 'none',
-            border: 'none',
-            outline: 'none',
-            width: '100%',
-            fontFamily: 'inherit',
-            fontSize: 12,
-            color: 'var(--text-1)',
-          }}
+          className="bg-transparent border-0 outline-none w-full text-xs text-fg-1"
         />
         {value && (
           <button
             onClick={() => onChange('')}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--text-3)',
-              padding: 0,
-              lineHeight: 1,
-              fontSize: 14,
-            }}
+            className="bg-transparent border-0 cursor-pointer text-fg-3 p-0 leading-none text-sm"
           >
             ×
           </button>

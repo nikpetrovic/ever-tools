@@ -37,7 +37,7 @@ export default function HtmlView({ html }: HtmlViewProps): React.JSX.Element {
       ref={iframeRef}
       sandbox="allow-same-origin"
       referrerPolicy="no-referrer"
-      style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+      className="w-full h-full border-0 block"
       title="Email HTML preview"
     />
   )
