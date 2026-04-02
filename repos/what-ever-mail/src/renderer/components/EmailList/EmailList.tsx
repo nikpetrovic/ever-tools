@@ -130,6 +130,16 @@ export default function EmailList({
         e.key === 'Delete' ||
         (e.key === 'Backspace' && (e.metaKey || e.ctrlKey))
 
+      if (e.key === 'Escape' && multiSelectedIds.size > 0) {
+        // Keep only the focused/last email selected, deselect the rest
+        const keepId = focusedIndex !== -1 && filtered[focusedIndex]
+          ? filtered[focusedIndex]!.id
+          : selectedId
+        setMultiSelectedIds(keepId ? new Set([keepId]) : new Set())
+        if (keepId) onSelect(keepId)
+        return
+      }
+
       if (isUp || isDown) {
         e.preventDefault()
 
