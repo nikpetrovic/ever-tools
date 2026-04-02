@@ -72,6 +72,7 @@ export default function EmailRow({ email, selected, isMultiSelected, onSelect, o
 
   return (
     <div
+      data-email-id={email.id}
       onClick={(e) => {
         if (e.shiftKey && onRangeSelect) {
           e.preventDefault()
