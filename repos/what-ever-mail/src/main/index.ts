@@ -5,6 +5,7 @@ import { startSmtpServer, stopSmtpServer } from './smtp/server'
 import { getSetting, setSetting } from './settings'
 import { closeDb } from './db/index'
 import { purgeOldTrashedEmails } from './db/emails'
+import { loadReleaseNotesIfNewBundle } from './release-notes'
 import { createTray, destroyTray } from './tray'
 
 app.setName('WhatEver Mail')
@@ -66,6 +67,7 @@ app.whenReady().then(() => {
   createWindow()
   if (mainWindow) {
     registerIpcHandlers(mainWindow)
+    loadReleaseNotesIfNewBundle()
     purgeOldTrashedEmails(15)
     startSmtpServer(getSetting('smtpPort'), mainWindow)
     createTray(mainWindow)

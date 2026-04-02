@@ -1,20 +1,25 @@
 {
   "name": "what-ever-mail",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local email capture tool for developers",
+  "author": "Nikola Petrovic",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "package": "npm run build && electron-builder",
-    "package:win": "npm run build && electron-builder --win --x64",
-    "package:mac:intel": "npm run build && electron-builder --mac --x64",
-    "package:mac:arm": "npm run build && electron-builder --mac --arm64",
-    "package:mac:universal": "npm run build && electron-builder --mac --universal",
-    "package:linux": "npm run build && electron-builder --linux --x64",
+    "package": "npm run release-notes:bundle && npm run build && electron-builder && npm run release-notes:cleanup",
+    "package:win": "npm run release-notes:bundle && npm run build && electron-builder --win --x64 && npm run release-notes:cleanup",
+    "package:mac:intel": "npm run release-notes:bundle && npm run build && electron-builder --mac --x64 && npm run release-notes:cleanup",
+    "package:mac:arm": "npm run release-notes:bundle && npm run build && electron-builder --mac --arm64 && npm run release-notes:cleanup",
+    "package:mac:universal": "npm run release-notes:bundle && npm run build && electron-builder --mac --universal && npm run release-notes:cleanup",
+    "package:linux": "npm run release-notes:bundle && npm run build && electron-builder --linux --x64 && npm run release-notes:cleanup",
+    "release-notes:bundle": "node scripts/bundle-release-notes.mjs",
+    "release-notes:cleanup": "node scripts/cleanup-release-notes-bundle.mjs",
     "generate-icons": "node scripts/generate-icons.mjs",
-    "rebuild": "electron-rebuild -f -w better-sqlite3"
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "tools:send-email": "node resources/examples/scripts/send-email.mjs",
+    "tools:send-plain-text-email": "node resources/examples/scripts/send-plain-text-email.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.0",

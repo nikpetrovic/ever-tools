@@ -44,7 +44,7 @@ function AppInner(): React.JSX.Element {
           onSearchChange={setSearchQuery}
         />
 
-        <Preview email={selectedEmail} />
+        <Preview email={selectedEmail} navItem={navItem} />
       </div>
 
       <StatusBar emailCount={emails.length} />

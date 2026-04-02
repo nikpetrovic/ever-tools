@@ -1,7 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
 import type { EmailRecord } from '../../types/email'
-import { useDeleteEmail } from '../../hooks/useEmails'
 
 type PreviewTab = 'html' | 'text' | 'source' | 'headers'
 
@@ -10,6 +9,7 @@ interface PreviewHeaderProps {
   activeTab: PreviewTab
   onTabChange: (tab: PreviewTab) => void
   onDelete: () => void
+  showDelete?: boolean
 }
 
 const TABS: { id: PreviewTab; label: string }[] = [
@@ -31,6 +31,7 @@ export default function PreviewHeader({
   activeTab,
   onTabChange,
   onDelete,
+  showDelete = true,
 }: PreviewHeaderProps): React.JSX.Element {
   return (
     <div className="border-b border-border bg-surface-panel shrink-0">
@@ -41,16 +42,18 @@ export default function PreviewHeader({
             {email.subject || '(no subject)'}
           </h2>
 
-          <button
-            onClick={onDelete}
-            title="Delete email"
-            className="bg-transparent border-0 cursor-pointer text-fg-3 p-1 rounded-md shrink-0 transition-colors duration-150 hover:text-red-500"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-            </svg>
-          </button>
+          {showDelete && (
+            <button
+              onClick={onDelete}
+              title="Delete email"
+              className="bg-transparent border-0 cursor-pointer text-fg-3 p-1 rounded-md shrink-0 transition-colors duration-150 hover:text-red-500"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-[48px_1fr] gap-y-[2px] text-xs text-fg-2">

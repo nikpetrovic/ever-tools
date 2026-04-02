@@ -7,6 +7,7 @@ interface Settings {
   theme: 'ember' | 'midnight' | 'jade' | 'rose' | 'azure'
   windowBounds: { x: number; y: number; width: number; height: number } | null
   startAtLogin: boolean
+  lastLoadedBundleId: string | null
 }
 
 const defaults: Settings = {
@@ -14,6 +15,7 @@ const defaults: Settings = {
   theme: 'ember',
   windowBounds: null,
   startAtLogin: false,
+  lastLoadedBundleId: null,
 }
 
 function getSettingsPath(): string {

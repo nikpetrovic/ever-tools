@@ -6,12 +6,14 @@ import TextView from './TextView'
 import SourceView from './SourceView'
 import HeadersView from './HeadersView'
 import { useTrashEmail } from '../../hooks/useEmails'
+import type { NavItem } from '../../store/ui'
 
 interface PreviewProps {
   email: EmailRecord | null
+  navItem: NavItem
 }
 
-export default function Preview({ email }: PreviewProps): React.JSX.Element {
+export default function Preview({ email, navItem }: PreviewProps): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<PreviewTab>('html')
   const trashEmail = useTrashEmail()
 
@@ -52,6 +54,7 @@ export default function Preview({ email }: PreviewProps): React.JSX.Element {
         activeTab={effectiveTab}
         onTabChange={setActiveTab}
         onDelete={() => trashEmail(email.id)}
+        showDelete={navItem !== 'trash'}
       />
 
       <div className="flex-1 overflow-hidden">

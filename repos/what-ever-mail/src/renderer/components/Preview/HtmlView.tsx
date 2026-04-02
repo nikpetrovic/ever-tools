@@ -12,8 +12,16 @@ export default function HtmlView({ html }: HtmlViewProps): React.JSX.Element {
     const iframe = iframeRef.current
     if (!iframe) return
 
+    // Extract ALL <style> contents before DOMPurify runs — it strips @keyframes,
+    // animation properties, and @import, breaking animated email templates.
+    // Injecting directly into <head> bypasses that sanitization.
+    const rawStyles = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)]
+      .map(m => m[1])
+      .join('\n')
+
+    // Sanitize only the HTML markup; style tags are stripped here (already extracted above)
     const clean = DOMPurify.sanitize(html, {
-      ADD_TAGS: ['style'],
+      FORBID_TAGS: ['style'],
       ADD_ATTR: ['target', 'rel'],
     })
 
@@ -24,10 +32,8 @@ export default function HtmlView({ html }: HtmlViewProps): React.JSX.Element {
     doc.write(`<!DOCTYPE html><html><head>
       <meta charset="UTF-8">
       <meta http-equiv="Content-Security-Policy"
-        content="default-src 'none'; style-src 'unsafe-inline'; img-src data: cid:;">
-      <style>
-        body { font-family: sans-serif; margin: 0; padding: 16px; font-size: 14px; line-height: 1.6; }
-      </style>
+        content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: cid:;">
+      <style>${rawStyles}</style>
     </head><body>${clean}</body></html>`)
     doc.close()
   }, [html])
