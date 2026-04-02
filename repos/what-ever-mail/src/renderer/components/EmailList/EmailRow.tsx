@@ -27,7 +27,7 @@ function ActionButton({ onClick, title, className, children }: ActionButtonProps
       onClick={onClick}
       title={title}
       className={clsx(
-        'bg-transparent border-0 cursor-pointer text-fg-3 p-[5px] rounded transition-colors duration-100',
+        'bg-transparent border-0 cursor-pointer text-fg-2 p-[5px] rounded transition-colors duration-100',
         className
       )}
     >
@@ -66,7 +66,9 @@ function hashColor(str: string): string {
 export default function EmailRow({ email, selected, isMultiSelected, onSelect, onMultiToggle, onRangeSelect, onTrash, onRestore, onDeleteForever }: EmailRowProps): React.JSX.Element {
   const initials = getInitials(email.from)
   const avatarColor = hashColor(email.from)
-  const preview = email.text?.replace(/\s+/g, ' ').trim().substring(0, 80) ?? ''
+  const preview = email.text
+    ? email.text.replace(/\s+/g, ' ').trim().substring(0, 80)
+    : (email.html?.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 80) ?? '')
 
   return (
     <div
@@ -129,9 +131,9 @@ export default function EmailRow({ email, selected, isMultiSelected, onSelect, o
         <div
           className="absolute right-0 top-0 bottom-0 w-[100px] flex items-center justify-end pr-1 gap-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none group-hover:pointer-events-auto"
           style={{
-            background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.52) 38%)',
-            backdropFilter: 'blur(1px)',
-            WebkitBackdropFilter: 'blur(1px)',
+            background: 'var(--hover-overlay)',
+            backdropFilter: 'blur(0.5px)',
+            WebkitBackdropFilter: 'blur(0.5px)',
           }}
         >
           {onTrash && (

@@ -15,6 +15,7 @@
   --text-3:      #9090b0;
   --border:      rgba(0,0,0,0.08);
   --shadow:      0 2px 12px rgba(0,0,0,0.08);
+  --hover-overlay: linear-gradient(to right, transparent, rgba(255,255,255,0.52) 38%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,6 +29,7 @@
     --text-3:      #55556a;
     --border:      rgba(255,255,255,0.07);
     --shadow:      0 2px 16px rgba(0,0,0,0.4);
+    --hover-overlay: linear-gradient(to right, transparent, rgba(20,20,24,0.68) 38%);
   }
 }
 

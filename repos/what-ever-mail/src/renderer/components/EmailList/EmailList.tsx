@@ -130,7 +130,7 @@ export default function EmailList({
                 </span>
                 <button
                   onClick={() => clearTrashedEmails()}
-                  className="bg-transparent border-0 cursor-pointer text-black hover:text-red-500 transition-colors duration-100 text-[11px] font-bold text-center w-full p-0"
+                  className="bg-transparent border-0 cursor-pointer text-fg-1 hover:text-red-500 transition-colors duration-100 text-[11px] font-bold text-center w-full p-0"
                 >
                   Empty trash now
                 </button>
