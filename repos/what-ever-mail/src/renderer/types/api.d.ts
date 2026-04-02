@@ -9,6 +9,10 @@ declare global {
         delete: (id: string) => Promise<void>
         clear: () => Promise<void>
         markRead: (id: string) => Promise<void>
+        trash: (id: string) => Promise<void>
+        restore: (id: string) => Promise<void>
+        deletePermanent: (id: string) => Promise<void>
+        clearTrash: () => Promise<void>
         onNew: (cb: (email: EmailRecord) => void) => () => void
       }
       settings: {

@@ -68,5 +68,6 @@ export async function parseRawEmail(rawBuffer: Buffer): Promise<EmailRecord> {
     attachments,
     read: false,
     createdAt: now,
+    deletedAt: null,
   }
 }

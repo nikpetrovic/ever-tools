@@ -18,7 +18,7 @@ export function createTray(mainWindow: BrowserWindow): void {
   }
 
   tray = new Tray(icon)
-  tray.setToolTip('what-ever-mail')
+  tray.setToolTip('WhatEver Mail')
 
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -59,7 +59,7 @@ export function updateTrayBadge(unreadCount: number): void {
   }
   if (tray) {
     tray.setToolTip(
-      unreadCount > 0 ? `what-ever-mail (${unreadCount} unread)` : 'what-ever-mail'
+      unreadCount > 0 ? `WhatEver Mail (${unreadCount} unread)` : 'WhatEver Mail'
     )
   }
 }

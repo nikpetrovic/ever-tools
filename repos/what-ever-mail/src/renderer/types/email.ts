@@ -19,4 +19,5 @@ export interface EmailRecord {
   attachments: Attachment[]
   read: boolean
   createdAt: string
+  deletedAt: string | null
 }

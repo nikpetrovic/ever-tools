@@ -16,6 +16,7 @@ interface EmailRow {
   attachments: string
   read: number
   created_at: string
+  deleted_at: string | null
 }
 
 function rowToRecord(row: EmailRow): EmailRecord {
@@ -34,6 +35,7 @@ function rowToRecord(row: EmailRow): EmailRecord {
     attachments: JSON.parse(row.attachments) as Attachment[],
     read: row.read === 1,
     createdAt: row.created_at,
+    deletedAt: row.deleted_at,
   }
 }
 
@@ -87,4 +89,30 @@ export function clearEmails(): void {
 export function markRead(id: string): void {
   const db = getDb()
   db.prepare('UPDATE emails SET read = 1 WHERE id = ?').run(id)
+}
+
+export function trashEmail(id: string): void {
+  const db = getDb()
+  db.prepare('UPDATE emails SET deleted_at = ? WHERE id = ?').run(new Date().toISOString(), id)
+}
+
+export function restoreEmail(id: string): void {
+  const db = getDb()
+  db.prepare('UPDATE emails SET deleted_at = NULL WHERE id = ?').run(id)
+}
+
+export function permanentDeleteEmail(id: string): void {
+  const db = getDb()
+  db.prepare('DELETE FROM emails WHERE id = ?').run(id)
+}
+
+export function clearTrashedEmails(): void {
+  const db = getDb()
+  db.prepare('DELETE FROM emails WHERE deleted_at IS NOT NULL').run()
+}
+
+export function purgeOldTrashedEmails(daysOld: number): void {
+  const db = getDb()
+  const cutoff = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000).toISOString()
+  db.prepare('DELETE FROM emails WHERE deleted_at IS NOT NULL AND deleted_at < ?').run(cutoff)
 }

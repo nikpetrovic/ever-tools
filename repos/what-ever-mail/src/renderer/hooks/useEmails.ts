@@ -49,3 +49,43 @@ export function useMarkRead(): (id: string) => Promise<void> {
     )
   }
 }
+
+export function useTrashEmail(): (id: string) => Promise<void> {
+  const queryClient = useQueryClient()
+  return async (id: string) => {
+    await window.api.emails.trash(id)
+    queryClient.setQueryData<EmailRecord[]>(EMAILS_KEY, (prev = []) =>
+      prev.map((e) => (e.id === id ? { ...e, deletedAt: new Date().toISOString() } : e))
+    )
+  }
+}
+
+export function useRestoreEmail(): (id: string) => Promise<void> {
+  const queryClient = useQueryClient()
+  return async (id: string) => {
+    await window.api.emails.restore(id)
+    queryClient.setQueryData<EmailRecord[]>(EMAILS_KEY, (prev = []) =>
+      prev.map((e) => (e.id === id ? { ...e, deletedAt: null } : e))
+    )
+  }
+}
+
+export function usePermanentDeleteEmail(): (id: string) => Promise<void> {
+  const queryClient = useQueryClient()
+  return async (id: string) => {
+    await window.api.emails.deletePermanent(id)
+    queryClient.setQueryData<EmailRecord[]>(EMAILS_KEY, (prev = []) =>
+      prev.filter((e) => e.id !== id)
+    )
+  }
+}
+
+export function useClearTrashedEmails(): () => Promise<void> {
+  const queryClient = useQueryClient()
+  return async () => {
+    await window.api.emails.clearTrash()
+    queryClient.setQueryData<EmailRecord[]>(EMAILS_KEY, (prev = []) =>
+      prev.filter((e) => e.deletedAt === null)
+    )
+  }
+}

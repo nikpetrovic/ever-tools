@@ -11,7 +11,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ navItem, emails, onNavigate }: SidebarProps): React.JSX.Element {
-  const unreadCount = emails.filter((e) => !e.read).length
+  const unreadCount = emails.filter((e) => !e.read && e.deletedAt === null).length
 
   return (
     <aside className="w-[176px] bg-surface-base border-r border-border flex flex-col py-3 px-2 shrink-0 gap-[2px]">

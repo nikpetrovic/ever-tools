@@ -19,4 +19,10 @@ export function runMigrations(db: Database.Database): void {
       created_at  TEXT NOT NULL
     )
   `)
+
+  try {
+    db.exec(`ALTER TABLE emails ADD COLUMN deleted_at TEXT DEFAULT NULL`)
+  } catch {
+    // column already exists — safe to ignore
+  }
 }

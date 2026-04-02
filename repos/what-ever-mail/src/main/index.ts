@@ -1,12 +1,16 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell, nativeImage } from 'electron'
 import { join } from 'path'
 import { registerIpcHandlers } from './ipc/handlers'
 import { startSmtpServer, stopSmtpServer } from './smtp/server'
 import { getSetting, setSetting } from './settings'
 import { closeDb } from './db/index'
+import { purgeOldTrashedEmails } from './db/emails'
 import { createTray, destroyTray } from './tray'
 
+app.setName('WhatEver Mail')
+
 let mainWindow: BrowserWindow | null = null
+let isQuitting = false
 
 function createWindow(): void {
   const bounds = getSetting('windowBounds')
@@ -32,8 +36,8 @@ function createWindow(): void {
       const b = mainWindow.getBounds()
       setSetting('windowBounds', { x: b.x, y: b.y, width: b.width, height: b.height })
     }
-    // Minimise to tray on macOS instead of quitting
-    if (process.platform === 'darwin') {
+    // Minimise to tray on macOS instead of quitting — unless the user explicitly quit
+    if (process.platform === 'darwin' && !isQuitting) {
       e.preventDefault()
       mainWindow?.hide()
     }
@@ -52,9 +56,17 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  // Set dock icon explicitly — fixes "Electron" default shown in dev mode
+  if (process.platform === 'darwin') {
+    const iconPath = join(__dirname, '../../resources/icon.icns')
+    const icon = nativeImage.createFromPath(iconPath)
+    if (!icon.isEmpty()) app.dock.setIcon(icon)
+  }
+
   createWindow()
   if (mainWindow) {
     registerIpcHandlers(mainWindow)
+    purgeOldTrashedEmails(15)
     startSmtpServer(getSetting('smtpPort'), mainWindow)
     createTray(mainWindow)
   }
@@ -79,6 +91,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('before-quit', () => {
+  isQuitting = true
   stopSmtpServer()
   closeDb()
   destroyTray()

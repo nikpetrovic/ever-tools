@@ -9,6 +9,10 @@ contextBridge.exposeInMainWorld('api', {
     delete: (id: string): Promise<void> => ipcRenderer.invoke(IPC.EMAILS_DELETE, id),
     clear: (): Promise<void> => ipcRenderer.invoke(IPC.EMAILS_CLEAR),
     markRead: (id: string): Promise<void> => ipcRenderer.invoke(IPC.EMAILS_MARK_READ, id),
+    trash: (id: string): Promise<void> => ipcRenderer.invoke(IPC.EMAILS_TRASH, id),
+    restore: (id: string): Promise<void> => ipcRenderer.invoke(IPC.EMAILS_RESTORE, id),
+    deletePermanent: (id: string): Promise<void> => ipcRenderer.invoke(IPC.EMAILS_DELETE_PERMANENT, id),
+    clearTrash: (): Promise<void> => ipcRenderer.invoke(IPC.EMAILS_CLEAR_TRASH),
     onNew: (cb: (email: EmailRecord) => void): (() => void) => {
       const listener = (_event: Electron.IpcRendererEvent, email: EmailRecord): void => cb(email)
       ipcRenderer.on(IPC.NEW_EMAIL, listener)

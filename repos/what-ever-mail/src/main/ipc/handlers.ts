@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { IPC } from './channels'
-import { listEmails, getEmail, deleteEmail, clearEmails, markRead } from '../db/emails'
+import { listEmails, getEmail, deleteEmail, clearEmails, markRead, trashEmail, restoreEmail, permanentDeleteEmail, clearTrashedEmails } from '../db/emails'
 import { getSetting, setSetting } from '../settings'
 import { getSmtpStatus, restartSmtpServer, stopSmtpServer } from '../smtp/server'
 import { updateTrayBadge } from '../tray'
@@ -21,6 +21,22 @@ export function registerIpcHandlers(mainWindow?: BrowserWindow): void {
 
   ipcMain.handle(IPC.EMAILS_MARK_READ, (_event, id: string) => {
     markRead(id)
+  })
+
+  ipcMain.handle(IPC.EMAILS_TRASH, (_event, id: string) => {
+    trashEmail(id)
+  })
+
+  ipcMain.handle(IPC.EMAILS_RESTORE, (_event, id: string) => {
+    restoreEmail(id)
+  })
+
+  ipcMain.handle(IPC.EMAILS_DELETE_PERMANENT, (_event, id: string) => {
+    permanentDeleteEmail(id)
+  })
+
+  ipcMain.handle(IPC.EMAILS_CLEAR_TRASH, () => {
+    clearTrashedEmails()
   })
 
   ipcMain.handle(IPC.SETTINGS_GET, (_event, key: string) => getSetting(key as never))

@@ -5,7 +5,7 @@ import HtmlView from './HtmlView'
 import TextView from './TextView'
 import SourceView from './SourceView'
 import HeadersView from './HeadersView'
-import { useDeleteEmail } from '../../hooks/useEmails'
+import { useTrashEmail } from '../../hooks/useEmails'
 
 interface PreviewProps {
   email: EmailRecord | null
@@ -13,7 +13,7 @@ interface PreviewProps {
 
 export default function Preview({ email }: PreviewProps): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<PreviewTab>('html')
-  const deleteEmail = useDeleteEmail()
+  const trashEmail = useTrashEmail()
 
   if (!email) {
     return (
@@ -51,7 +51,7 @@ export default function Preview({ email }: PreviewProps): React.JSX.Element {
         email={email}
         activeTab={effectiveTab}
         onTabChange={setActiveTab}
-        onDelete={() => deleteEmail(email.id)}
+        onDelete={() => trashEmail(email.id)}
       />
 
       <div className="flex-1 overflow-hidden">
