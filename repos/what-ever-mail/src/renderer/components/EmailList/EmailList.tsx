@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react'
+import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 import type { EmailRecord } from '../../types/email'
 import type { NavItem } from '../../store/ui'
 import EmailRow from './EmailRow'
@@ -30,6 +30,8 @@ export default function EmailList({
 
   const [multiSelectedIds, setMultiSelectedIds] = useState<Set<string>>(new Set())
   const [lastClickedId, setLastClickedId] = useState<string | null>(null)
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   // Clear multiselect when navigating away from inbox
   useEffect(() => {
@@ -100,6 +102,104 @@ export default function EmailList({
     setMultiSelectedIds(new Set())
   }, [multiSelectedIds, trashEmail])
 
+  // Keep focusedIndex in sync with selectedId (e.g. when user clicks a row)
+  useEffect(() => {
+    if (!selectedId) return
+    const idx = filtered.findIndex((e) => e.id === selectedId)
+    if (idx !== -1) setFocusedIndex(idx)
+  }, [selectedId, filtered])
+
+  // Scroll focused email into view on keyboard navigation
+  useEffect(() => {
+    if (focusedIndex === -1 || !scrollContainerRef.current) return
+    const focusedEmail = filtered[focusedIndex]
+    if (!focusedEmail) return
+    const el = scrollContainerRef.current.querySelector(`[data-email-id="${focusedEmail.id}"]`)
+    el?.scrollIntoView({ block: 'nearest' })
+  }, [focusedIndex, filtered])
+
+  // Keyboard navigation: arrow keys, shift+arrow select, delete
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent): void {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      if (filtered.length === 0) return
+
+      const isUp = e.key === 'ArrowUp'
+      const isDown = e.key === 'ArrowDown'
+      const isDelete =
+        e.key === 'Delete' ||
+        (e.key === 'Backspace' && (e.metaKey || e.ctrlKey))
+
+      if (isUp || isDown) {
+        e.preventDefault()
+
+        const currentIdx = focusedIndex !== -1
+          ? focusedIndex
+          : selectedId
+            ? filtered.findIndex((em) => em.id === selectedId)
+            : -1
+
+        const startIdx = currentIdx === -1 ? 0 : currentIdx
+        const nextIdx = isDown
+          ? Math.min(startIdx + 1, filtered.length - 1)
+          : Math.max(startIdx - 1, 0)
+
+        if (nextIdx === currentIdx && currentIdx !== -1) return
+
+        const nextEmail = filtered[nextIdx]
+        if (!nextEmail) return
+
+        if (e.shiftKey && navItem === 'inbox') {
+          setMultiSelectedIds((prev) => {
+            const next = new Set(prev)
+            if (currentIdx !== -1) {
+              const anchor = filtered[currentIdx]
+              if (anchor) next.add(anchor.id)
+            }
+            next.add(nextEmail.id)
+            return next
+          })
+          setFocusedIndex(nextIdx)
+        } else {
+          setMultiSelectedIds(new Set())
+          setFocusedIndex(nextIdx)
+          setLastClickedId(nextEmail.id)
+          onSelect(nextEmail.id)
+          if (!nextEmail.read) markRead(nextEmail.id)
+        }
+        return
+      }
+
+      if (isDelete) {
+        if (navItem === 'inbox') {
+          if (multiSelectedIds.size > 0) {
+            void handleBulkTrash()
+          } else if (selectedId) {
+            void trashEmail(selectedId)
+          }
+        } else if (navItem === 'trash') {
+          if (selectedId) {
+            void permanentDeleteEmail(selectedId)
+          }
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [
+    filtered,
+    focusedIndex,
+    selectedId,
+    multiSelectedIds,
+    navItem,
+    handleBulkTrash,
+    trashEmail,
+    permanentDeleteEmail,
+    markRead,
+    onSelect,
+  ])
+
   const isMultiSelectActive = navItem === 'inbox' && multiSelectedIds.size > 0
 
   return (
@@ -114,7 +214,7 @@ export default function EmailList({
         <SearchBox value={searchQuery} onChange={onSearchChange} />
       )}
 
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
           <EmptyState hasSearch={searchQuery.length > 0} navItem={navItem} />
         ) : (
