@@ -117,7 +117,7 @@ what-ever-mail/
 │   ├── icon.ico                 ← Windows
 │   └── icon.png                 ← Linux
 │
-└── dev/                         ← dev docs (this folder)
+└── docs/dev/                    ← dev docs (this folder)
 ```
 
 ---
