@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import clsx from 'clsx'
+import { WindowControls } from './WindowControls'
 
 interface SmtpStatus {
   running: boolean
@@ -12,7 +13,10 @@ interface TitleBarProps {
 
 export default function TitleBar({ onSettingsClick }: TitleBarProps): React.JSX.Element {
   const [smtp, setSmtp] = useState<SmtpStatus>({ running: false, port: 1025 })
-  const isMac = navigator.platform.includes('Mac')
+  const isMac = navigator.userAgent.includes('Macintosh')
+  const isWindows =
+    import.meta.env.VITE_FORCE_PLATFORM === 'windows' ||
+    navigator.userAgent.includes('Windows')
 
   useEffect(() => {
     window.api.smtp.getStatus().then(setSmtp)
@@ -29,44 +33,63 @@ export default function TitleBar({ onSettingsClick }: TitleBarProps): React.JSX.
     }
   }, [])
 
+  const smtpBadge = (
+    <div
+      className={clsx(
+        'flex items-center gap-[5px] rounded-[20px] px-[10px] py-[3px] text-[11px] font-medium text-[#888] tracking-[0.04em] app-no-drag border',
+        smtp.running ? 'border-emerald-500' : 'border-red-500'
+      )}
+    >
+      <span className={`w-[6px] h-[6px] rounded-full inline-block shrink-0 ${smtp.running ? 'bg-emerald-500' : 'bg-red-500'}`} />
+      SMTP :{smtp.port}
+    </div>
+  )
+
+  const settingsButton = (
+    <button
+      onClick={onSettingsClick}
+      title="Settings"
+      className="bg-transparent border-0 cursor-pointer text-fg-2 p-1 rounded-md flex items-center app-no-drag transition-colors duration-150 hover:text-fg-1"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    </button>
+  )
+
   return (
     <header
       className={clsx(
-        'h-11 bg-surface-panel border-b border-accent flex items-center gap-3 shrink-0 select-none relative app-drag',
-        isMac ? 'pl-20 pr-4' : 'px-4'
+        'h-11 bg-surface-panel border-b border-accent flex items-center shrink-0 select-none relative app-drag',
+        isMac ? 'pl-20 pr-4 gap-3' : isWindows ? 'pl-3 pr-0 gap-3' : 'px-4 gap-3'
       )}
     >
-      {/* Wordmark — horizontally centered */}
+      {/* Wordmark — always horizontally centred */}
       <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-bold text-[15px] tracking-[-0.4px] whitespace-nowrap pointer-events-none">
         <span className="text-fg-1">What </span>
         <span className="text-accent">Ever</span>
         <span className="text-fg-1"> Mail</span>
       </span>
 
-      <div className="flex-1" />
+      {/* macOS / Linux: spacer left | SMTP | Settings */}
+      {!isWindows && (
+        <>
+          <div className="flex-1" />
+          {smtpBadge}
+          {settingsButton}
+        </>
+      )}
 
-      {/* SMTP status */}
-      <div
-        className={clsx(
-          'flex items-center gap-[5px] rounded-[20px] px-[10px] py-[3px] text-[11px] font-medium text-[#888] tracking-[0.04em] app-no-drag border',
-          smtp.running ? 'border-emerald-500' : 'border-red-500'
-        )}
-      >
-        <span className={`w-[6px] h-[6px] rounded-full inline-block shrink-0 ${smtp.running ? 'bg-emerald-500' : 'bg-red-500'}`} />
-        SMTP :{smtp.port}
-      </div>
-
-      {/* Settings icon */}
-      <button
-        onClick={onSettingsClick}
-        title="Settings"
-        className="bg-transparent border-0 cursor-pointer text-fg-2 p-1 rounded-md flex items-center app-no-drag transition-colors duration-150 hover:text-fg-1"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-        </svg>
-      </button>
+      {/* Windows: SMTP left | spacer | Settings | WindowControls */}
+      {isWindows && (
+        <>
+          {smtpBadge}
+          <div className="flex-1" />
+          {settingsButton}
+          <WindowControls />
+        </>
+      )}
     </header>
   )
 }

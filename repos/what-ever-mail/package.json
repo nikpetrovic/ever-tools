@@ -6,6 +6,7 @@
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
+    "dev:win": "VITE_FORCE_PLATFORM=windows electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "package": "npm run release-notes:bundle && npm run build && electron-builder && npm run release-notes:cleanup",

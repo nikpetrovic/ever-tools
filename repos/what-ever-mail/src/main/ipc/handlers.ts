@@ -59,4 +59,21 @@ export function registerIpcHandlers(mainWindow?: BrowserWindow): void {
   ipcMain.handle(IPC.TRAY_BADGE, (_event, count: number) => {
     updateTrayBadge(count)
   })
+
+  ipcMain.handle(IPC.WINDOW_MINIMIZE, () => {
+    mainWindow?.minimize()
+  })
+
+  ipcMain.handle(IPC.WINDOW_MAXIMIZE_TOGGLE, () => {
+    if (!mainWindow) return
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize()
+    } else {
+      mainWindow.maximize()
+    }
+  })
+
+  ipcMain.handle(IPC.WINDOW_CLOSE, () => {
+    mainWindow?.close()
+  })
 }
