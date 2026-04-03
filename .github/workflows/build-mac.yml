@@ -1,0 +1,52 @@
+name: Build macOS
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+
+    defaults:
+      run:
+        working-directory: repos/what-ever-mail
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: repos/what-ever-mail/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Rebuild native addons for Electron
+        run: npm run rebuild
+
+      - name: Bundle release notes for macOS
+        run: node scripts/bundle-release-notes.mjs mac
+
+      - name: Build and package for macOS (universal)
+        run: npm run build && electron-builder --mac --universal && npm run release-notes:cleanup
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: what-ever-mail-mac-dmg
+          path: repos/what-ever-mail/dist/*.dmg
+          if-no-files-found: error
+
+      - name: Upload zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: what-ever-mail-mac-zip
+          path: repos/what-ever-mail/dist/*.zip
+          if-no-files-found: error

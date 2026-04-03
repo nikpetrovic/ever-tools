@@ -31,8 +31,11 @@ jobs:
       - name: Rebuild native addons for Electron
         run: npm run rebuild
 
-      - name: Package for Windows
-        run: npm run package:win
+      - name: Bundle release notes for Windows
+        run: node scripts/bundle-release-notes.mjs win
+
+      - name: Build and package for Windows
+        run: npm run build && electron-builder --win --x64 && npm run release-notes:cleanup
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4

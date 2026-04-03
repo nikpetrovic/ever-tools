@@ -1,0 +1,6 @@
+This is a plain text email sent to localhost:1025.
+
+Current date: ${current_date}
+
+Best regards,
+The WhatEver Mail Team
