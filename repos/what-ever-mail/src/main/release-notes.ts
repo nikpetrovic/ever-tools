@@ -3,8 +3,9 @@ import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { v4 as uuid } from 'uuid'
 import type { EmailRecord } from '../renderer/types/email'
-import { insertEmail } from './db/emails'
+import { insertEmail, hasAnyEmails } from './db/emails'
 import { getSetting, setSetting } from './settings'
+import { logError, logInfo } from './logger'
 
 interface ReleaseNoteEmail {
   number: number
@@ -68,7 +69,9 @@ export function loadReleaseNotesIfNewBundle(): void {
   if (!bundle.bundleId) return
 
   const lastLoadedBundleId = getSetting('lastLoadedBundleId')
-  if (bundle.bundleId === lastLoadedBundleId) return
+  // If the bundle ID matches but the DB is empty (e.g. fresh install on Windows
+  // where a previous run stored the ID but emails were never written), reload.
+  if (bundle.bundleId === lastLoadedBundleId && hasAnyEmails()) return
 
   const localDate = new Date().toLocaleString()
   const from = replacePlaceholders(bundle.meta.from, localDate)
@@ -77,6 +80,8 @@ export function loadReleaseNotesIfNewBundle(): void {
 
   const emails = bundle.emails.slice().sort((a, b) => a.number - b.number)
   const now = Date.now()
+
+  logInfo('release-notes', `Loading bundle ${bundle.bundleId} (${emails.length} email(s))`)
 
   for (let i = 0; i < emails.length; i++) {
     const entry = emails[i]
@@ -111,8 +116,16 @@ export function loadReleaseNotesIfNewBundle(): void {
       deletedAt: null,
     }
 
-    insertEmail(record)
+    try {
+      insertEmail(record)
+      logInfo('release-notes', `Inserted email ${i + 1}/${emails.length}: ${entry.filename}`)
+    } catch (err) {
+      logError('release-notes', err)
+    }
   }
 
+  // Always persist the bundleId — if inserts failed due to a permanent error
+  // (e.g. schema mismatch), retrying on every launch won't help.
   setSetting('lastLoadedBundleId', bundle.bundleId)
+  logInfo('release-notes', `Bundle ${bundle.bundleId} marked as loaded`)
 }

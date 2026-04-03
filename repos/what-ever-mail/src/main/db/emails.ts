@@ -111,6 +111,12 @@ export function clearTrashedEmails(): void {
   db.prepare('DELETE FROM emails WHERE deleted_at IS NOT NULL').run()
 }
 
+export function hasAnyEmails(): boolean {
+  const db = getDb()
+  const row = db.prepare('SELECT 1 FROM emails LIMIT 1').get()
+  return row !== undefined
+}
+
 export function purgeOldTrashedEmails(daysOld: number): void {
   const db = getDb()
   const cutoff = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000).toISOString()
