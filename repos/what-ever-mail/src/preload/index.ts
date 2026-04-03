@@ -36,4 +36,15 @@ contextBridge.exposeInMainWorld('api', {
   tray: {
     setBadge: (count: number): Promise<void> => ipcRenderer.invoke(IPC.TRAY_BADGE, count),
   },
+
+  window: {
+    minimize: (): Promise<void> => ipcRenderer.invoke(IPC.WINDOW_MINIMIZE),
+    maximizeToggle: (): Promise<void> => ipcRenderer.invoke(IPC.WINDOW_MAXIMIZE_TOGGLE),
+    close: (): Promise<void> => ipcRenderer.invoke(IPC.WINDOW_CLOSE),
+    onMaximizedChange: (cb: (isMaximized: boolean) => void): (() => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, value: boolean): void => cb(value)
+      ipcRenderer.on(IPC.WINDOW_MAXIMIZED_CHANGE, listener)
+      return () => ipcRenderer.off(IPC.WINDOW_MAXIMIZED_CHANGE, listener)
+    },
+  },
 })

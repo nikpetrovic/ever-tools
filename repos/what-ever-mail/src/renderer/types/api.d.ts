@@ -27,6 +27,12 @@ declare global {
       tray: {
         setBadge: (count: number) => Promise<void>
       }
+      window: {
+        minimize: () => Promise<void>
+        maximizeToggle: () => Promise<void>
+        close: () => Promise<void>
+        onMaximizedChange: (cb: (isMaximized: boolean) => void) => () => void
+      }
     }
   }
 }

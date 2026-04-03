@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, nativeImage } from 'electron'
+import { app, BrowserWindow, Menu, shell, nativeImage } from 'electron'
 import { join } from 'path'
 import { registerIpcHandlers } from './ipc/handlers'
 import { startSmtpServer, stopSmtpServer } from './smtp/server'
@@ -7,8 +7,13 @@ import { closeDb } from './db/index'
 import { purgeOldTrashedEmails } from './db/emails'
 import { loadReleaseNotesIfNewBundle } from './release-notes'
 import { createTray, destroyTray } from './tray'
+import { IPC } from './ipc/channels'
 
 app.setName('WhatEver Mail')
+
+if (process.platform === 'win32') {
+  Menu.setApplicationMenu(null)
+}
 
 let mainWindow: BrowserWindow | null = null
 let isQuitting = false
@@ -23,7 +28,9 @@ function createWindow(): void {
     y: bounds?.y,
     minWidth: 800,
     minHeight: 600,
-    titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
+    ...(process.platform === 'darwin'
+      ? { titleBarStyle: 'hiddenInset' as const }
+      : { frame: false }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
@@ -68,6 +75,15 @@ app.whenReady().then(() => {
   if (mainWindow) {
     registerIpcHandlers(mainWindow)
     loadReleaseNotesIfNewBundle()
+
+    if (process.platform === 'win32') {
+      mainWindow.on('maximize', () => {
+        mainWindow?.webContents.send(IPC.WINDOW_MAXIMIZED_CHANGE, true)
+      })
+      mainWindow.on('unmaximize', () => {
+        mainWindow?.webContents.send(IPC.WINDOW_MAXIMIZED_CHANGE, false)
+      })
+    }
     purgeOldTrashedEmails(15)
     startSmtpServer(getSetting('smtpPort'), mainWindow)
     createTray(mainWindow)
