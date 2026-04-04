@@ -78,7 +78,7 @@ function NavButton({ label, active, badge, icon, onClick }: NavButtonProps): Rea
       {icon}
       <span className="flex-1">{label}</span>
       {badge !== undefined && (
-        <span className="bg-grad text-white rounded-[10px] px-[6px] py-px text-[11px] font-semibold min-w-[18px] text-center">
+        <span className="bg-grad text-fg-1 rounded-[10px] px-[6px] py-px text-[11px] font-semibold min-w-[18px] text-center">
           {badge}
         </span>
       )}

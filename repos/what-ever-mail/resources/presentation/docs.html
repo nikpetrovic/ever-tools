@@ -266,22 +266,22 @@
 
     /* mini email content */
     .mini-email {
-      background: #fff; border-radius: 7px; overflow: hidden; font-family: 'Poppins', sans-serif;
+      background: var(--app-panel); border-radius: 7px; overflow: hidden; font-family: 'Poppins', sans-serif;
     }
     .mini-ec-hero { background: linear-gradient(135deg,#f97316,#fbbf24); padding: 14px; text-align: center; }
     .mini-ec-hero h4 { color: #fff; font-size: 0.65rem; font-weight: 700; margin-bottom: 2px; }
     .mini-ec-hero p  { color: rgba(255,255,255,.85); font-size: 0.55rem; }
     .mini-ec-body { padding: 10px 12px; }
-    .mini-ec-body p { font-size: 0.6rem; color: #1a1a2e; line-height: 1.5; margin-bottom: 8px; }
+    .mini-ec-body p { font-size: 0.6rem; color: var(--app-t1); line-height: 1.5; margin-bottom: 8px; }
     .mini-ec-body strong { color: #f97316; }
     .mini-ec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
     .mini-ec-card { padding: 7px 8px; border-radius: 5px; border-left: 2px solid; }
-    .mini-ec-card.em { background:#fff7ed; border-color:#f97316; }
-    .mini-ec-card.ja { background:#f0fdf4; border-color:#10b981; }
-    .mini-ec-card.az { background:#eff6ff; border-color:#3b82f6; }
-    .mini-ec-card.pu { background:#fdf4ff; border-color:#a855f7; }
-    .mini-ec-card span { font-size: 0.58rem; color: #1a1a2e; font-weight: 700; display: block; }
-    .mini-ec-card small { font-size: 0.52rem; color: #5a5a7a; }
+    .mini-ec-card.em { background:rgba(249,115,22,0.1); border-color:#f97316; }
+    .mini-ec-card.ja { background:rgba(16,185,129,0.1); border-color:#10b981; }
+    .mini-ec-card.az { background:rgba(59,130,246,0.1); border-color:#3b82f6; }
+    .mini-ec-card.pu { background:rgba(168,85,247,0.1); border-color:#a855f7; }
+    .mini-ec-card span { font-size: 0.58rem; color: var(--app-t1); font-weight: 700; display: block; }
+    .mini-ec-card small { font-size: 0.52rem; color: var(--app-t2); }
 
     /* mini list mock */
     .mini-list-mock { background: var(--app-panel); }
@@ -426,7 +426,7 @@
     .code-tab {
       padding: 6px 16px; border: none; border-radius: 8px 8px 0 0; cursor: pointer;
       font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 500;
-      background: rgba(13,13,17,0.5); color: #546e7a; transition: all .15s;
+      background: var(--bg-panel); color: var(--t3); transition: all .15s;
     }
     .code-tab.active { background: #0d0d11; color: #eeeef4; }
     .code-tab-panels { position: relative; }
