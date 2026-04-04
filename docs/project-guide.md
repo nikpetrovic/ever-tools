@@ -99,6 +99,7 @@ All generic guides live in `../guides/` (one level above `ever-tools/`, i.e. the
 | `nextjs.md` | ever-admin |
 | `react.md` | ever-admin |
 | `resend-email-provider.md` | ever-admin |
+| `product-landing-page.md` | ever-tools |
 
 ### Adding a new shared guide
 

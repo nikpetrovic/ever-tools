@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OG Image Template — Screenshot at 1200x630</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 1200px; height: 630px; overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      background: #0d0d11;
+      color: #eeeef4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* subtle radial glow behind mockup */
+    .glow {
+      position: absolute;
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.12) 0%, transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .layout {
+      display: flex; gap: 48px; align-items: center;
+      position: relative; z-index: 1;
+    }
+
+    /* ── App mockup (left side) ── */
+    .mockup {
+      width: 580px; height: 420px;
+      background: #141418;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.07);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    /* mac chrome */
+    .chrome {
+      height: 36px; display: flex; align-items: center; padding: 0 14px; gap: 7px;
+      background: #141418; border-bottom: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+
+    /* titlebar */
+    .titlebar {
+      height: 38px; display: flex; align-items: center; gap: 10px;
+      padding: 0 14px;
+      border-bottom: 2px solid; border-image: linear-gradient(90deg, #f97316, #fbbf24) 1;
+      background: #141418; flex-shrink: 0;
+    }
+    .wordmark { font-size: 0.78rem; font-weight: 700; color: #eeeef4; }
+    .wm-ever { color: #f97316; }
+    .smtp-pill {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 100px;
+      background: rgba(16,185,129,0.1); color: #10b981;
+      font-size: 0.6rem; font-weight: 600;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .smtp-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+
+    /* body layout */
+    .app-body { display: flex; flex: 1; min-height: 0; }
+
+    /* sidebar */
+    .sidebar {
+      width: 140px; background: #0d0d11; padding: 8px 6px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 8px; border-radius: 6px;
+      font-size: 0.68rem; color: #8888a8;
+      border: none; background: transparent; width: 100%;
+      font-family: 'Poppins', sans-serif; cursor: default;
+    }
+    .nav-btn.active { background: rgba(249,115,22,0.12); color: #f97316; font-weight: 600; }
+    .badge {
+      margin-left: auto; font-size: 0.56rem; font-weight: 600;
+      background: linear-gradient(135deg, #f97316, #fbbf24);
+      color: #eeeef4; border-radius: 8px; padding: 1px 6px;
+    }
+
+    /* email list */
+    .list {
+      width: 180px; background: #141418;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      flex-shrink: 0; overflow: hidden;
+    }
+    .list-search {
+      padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .search-box {
+      width: 100%; padding: 5px 8px; border-radius: 6px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      color: #55556a; font-size: 0.6rem; font-family: 'Poppins', sans-serif;
+    }
+    .email-row {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .email-row.selected { background: rgba(255,255,255,0.07); }
+    .email-from { font-size: 0.6rem; font-weight: 600; color: #eeeef4; margin-bottom: 1px; }
+    .email-subj { font-size: 0.56rem; color: #8888a8; }
+    .email-prev { font-size: 0.52rem; color: #55556a; margin-top: 1px; }
+
+    /* preview pane */
+    .preview { flex: 1; background: #0d0d11; display: flex; flex-direction: column; overflow: hidden; }
+    .preview-header {
+      padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .ph-subj { font-size: 0.7rem; font-weight: 700; color: #eeeef4; margin-bottom: 4px; }
+    .ph-meta { display: flex; gap: 12px; font-size: 0.52rem; color: #55556a; }
+    .preview-tabs {
+      display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .ptab {
+      padding: 5px 10px; font-size: 0.56rem; border: none; background: transparent;
+      color: #55556a; font-family: 'Poppins', sans-serif; cursor: default;
+      border-bottom: 2px solid transparent;
+    }
+    .ptab.active { color: #f97316; border-bottom-color: #f97316; font-weight: 600; }
+
+    /* email content */
+    .email-content {
+      flex: 1; margin: 8px; border-radius: 8px; overflow: hidden;
+      background: #141418;
+    }
+    .ec-hero {
+      background: linear-gradient(135deg, #f97316, #fbbf24);
+      padding: 14px 12px; text-align: center;
+    }
+    .ec-hero h3 { color: #fff; font-size: 0.7rem; font-weight: 800; margin-bottom: 2px; }
+    .ec-hero p { color: rgba(255,255,255,0.85); font-size: 0.5rem; }
+    .ec-body { padding: 10px 12px; }
+    .ec-body p { font-size: 0.5rem; color: #eeeef4; line-height: 1.5; margin-bottom: 8px; }
+    .ec-body strong { color: #f97316; }
+    .ec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .ec-card {
+      padding: 6px 8px; border-radius: 5px; border-left: 2px solid;
+    }
+    .ec-card.em { background: rgba(249,115,22,0.1); border-color: #f97316; }
+    .ec-card.ja { background: rgba(16,185,129,0.1); border-color: #10b981; }
+    .ec-card strong { font-size: 0.48rem; font-weight: 700; color: #eeeef4; display: block; }
+    .ec-card span { font-size: 0.42rem; color: #8888a8; }
+
+    /* ── Branding (right side) ── */
+    .branding {
+      max-width: 420px;
+    }
+    .brand-name {
+      font-size: 2.2rem; font-weight: 900; letter-spacing: -0.03em;
+      line-height: 1.1; margin-bottom: 12px;
+    }
+    .brand-ever {
+      background: linear-gradient(135deg, #f97316, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .brand-tagline {
+      font-size: 1rem; color: #8888a8; line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .brand-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .brand-badge {
+      padding: 4px 12px; border-radius: 100px;
+      background: rgba(249,115,22,0.1); color: #f97316;
+      font-size: 0.7rem; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+
+  <div class="layout">
+    <!-- App mockup -->
+    <div class="mockup">
+      <div class="chrome">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="titlebar">
+        <div class="wordmark">What<span class="wm-ever">Ever</span> Mail</div>
+        <div class="smtp-pill"><div class="smtp-dot"></div>SMTP :1025</div>
+      </div>
+      <div class="app-body">
+        <div class="sidebar">
+          <div class="nav-btn active">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            Inbox <span class="badge">5</span>
+          </div>
+          <div class="nav-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            Trash
+          </div>
+        </div>
+        <div class="list">
+          <div class="list-search"><div class="search-box">Search emails...</div></div>
+          <div class="email-row selected">
+            <div class="email-from">Ever Ideas Co.</div>
+            <div class="email-subj">Whatever you imagine</div>
+            <div class="email-prev">Ever notice how the best ideas...</div>
+          </div>
+          <div class="email-row">
+            <div class="email-from">WhatEver Mail</div>
+            <div class="email-subj">Welcome aboard!</div>
+            <div class="email-prev">No account needed, no rate limits...</div>
+          </div>
+          <div class="email-row">
+            <div class="email-from">Zen Sender</div>
+            <div class="email-subj">Daily mindfulness</div>
+            <div class="email-prev">The best moment is always now</div>
+          </div>
+        </div>
+        <div class="preview">
+          <div class="preview-header">
+            <div class="ph-subj">Whatever you imagine —</div>
+            <div class="ph-meta">
+              <span>From: hello@everideas.co</span>
+              <span>To: you@yourapp.dev</span>
+            </div>
+          </div>
+          <div class="preview-tabs">
+            <div class="ptab active">HTML</div>
+            <div class="ptab">Text</div>
+            <div class="ptab">Source</div>
+            <div class="ptab">Headers</div>
+          </div>
+          <div class="email-content">
+            <div class="ec-hero">
+              <h3>What<strong>ever</strong> you imagine —</h3>
+              <p>you can build it. You can send it.</p>
+            </div>
+            <div class="ec-body">
+              <p><strong>Ever</strong> notice how the best ideas start with a single message?</p>
+              <div class="ec-grid">
+                <div class="ec-card em"><strong>Ever growing</strong><span>Every idea deserves to bloom.</span></div>
+                <div class="ec-card ja"><strong>Ever forward</strong><span>Progress, one send at a time.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Branding text -->
+    <div class="branding">
+      <div class="brand-name">
+        What<span class="brand-ever">Ever</span><br>Mail
+      </div>
+      <div class="brand-tagline">
+        Local SMTP for developers.<br>
+        Catch every email. Miss nothing.
+      </div>
+      <div class="brand-badges">
+        <span class="brand-badge">100% Offline</span>
+        <span class="brand-badge">No Account</span>
+        <span class="brand-badge">Cross-platform</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

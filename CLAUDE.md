@@ -23,6 +23,7 @@ All technical guides are in [`docs/guides/`](docs/guides/). Use them by language
 | [`docs/guides/code-comments.md`](docs/guides/code-comments.md) | How to write code comments |
 | [`docs/guides/git.md`](docs/guides/git.md) | Git conventions |
 | [`docs/guides/documentation-and-automation.md`](docs/guides/documentation-and-automation.md) | When/where to document discoveries and recognise automation opportunities |
+| [`docs/guides/product-landing-page.md`](docs/guides/product-landing-page.md) | Building static product landing pages (SEO, OG tags, design tokens, deployment) |
 
 > Guides in `docs/guides/` are symlinks to the shared `../guides/` folder at the `eversoft/` level. Edit there; all projects see the change immediately.
 
