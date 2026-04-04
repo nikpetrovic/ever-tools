@@ -2,6 +2,7 @@
   "name": "whatever-mail",
   "version": "1.0.0",
   "description": "Local email capture tool for developers",
+  "homepage": "https://WhatEver-Mail.eversoft.space",
   "author": "Nikola Petrovic",
   "main": "./out/main/index.js",
   "scripts": {
