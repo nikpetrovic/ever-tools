@@ -90,11 +90,6 @@
     }
     .nav-logo { font-size: 1rem; font-weight: 700; }
     .nav-logo .logo-ever { color: #f97316; }
-    .nav-badge {
-      font-size: 0.68rem; padding: 2px 8px; border-radius: 100px;
-      background: rgba(249,115,22,0.12); color: #f97316;
-      font-weight: 600; margin-left: 8px; vertical-align: middle;
-    }
     .nav-links { display: flex; gap: 28px; align-items: center; }
     .nav-links a { color: var(--page-t2); text-decoration: none; font-size: 0.875rem; transition: color .2s; }
     .nav-links a:hover { color: var(--page-t1); }
@@ -510,9 +505,8 @@
     }
     .footer-logo { font-weight: 700; font-size: 0.9rem; color: var(--page-t2); }
     .footer-logo .lo-ever { color: #f97316; }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-links a { color: var(--page-t3); text-decoration: none; }
-    .footer-links a:hover { color: var(--page-t2); }
+    footer a { color: var(--page-t3); text-decoration: none; }
+    footer a:hover { color: var(--page-t2); }
 
     /* ─── SCROLL INDICATORS ─── */
     .scroll-dots {
@@ -608,7 +602,6 @@
 <nav>
   <div class="nav-logo">
     What<span class="logo-ever">Ever</span> Mail
-    <span class="nav-badge">v0.2</span>
   </div>
   <div class="nav-links">
     <a href="#screens">Screenshots</a>
@@ -1340,9 +1333,7 @@ smtp://localhost:1025</div>
 <!-- ─── FOOTER ─── -->
 <footer>
   <div class="footer-logo">What<span class="lo-ever">Ever</span> Mail</div>
-  <div class="footer-links">
-    <a href="docs.html">Documentation</a>
-  </div>
+  <a href="https://ever-tools.eversoft.space">EverTools by &copy; Eversoft 2026</a>
   <div style="color:var(--page-t3);font-size:.75rem;">Built for developers. 100% free, <span class="ever" style="font-size:.75rem;">ever</span>.</div>
 </footer>
 
@@ -1392,8 +1383,8 @@ smtp://localhost:1025</div>
       cancelAnimationFrame(scrollTimer);
       scrollTimer = requestAnimationFrame(updateActiveDot);
     });
-    /* Start with macOS (index 1) centered */
-    frames[1].scrollIntoView({ block: 'nearest', inline: 'center' });
+    /* Start with macOS (index 1) centered — use scrollLeft to avoid vertical page scroll */
+    grid.scrollLeft = frames[1].offsetLeft - (grid.offsetWidth - frames[1].offsetWidth) / 2;
     updateActiveDot();
 
     dots.forEach(function (dot) {

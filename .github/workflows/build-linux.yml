@@ -40,13 +40,13 @@ jobs:
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v4
         with:
-          name: what-ever-mail-linux-appimage
+          name: whatever-mail-linux-appimage
           path: repos/what-ever-mail/dist/*.AppImage
           if-no-files-found: error
 
       - name: Upload deb artifact
         uses: actions/upload-artifact@v4
         with:
-          name: what-ever-mail-linux-deb
+          name: whatever-mail-linux-deb
           path: repos/what-ever-mail/dist/*.deb
           if-no-files-found: error

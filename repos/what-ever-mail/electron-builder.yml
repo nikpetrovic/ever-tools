@@ -1,4 +1,4 @@
-appId: com.eversoft.what-ever-mail
+appId: com.eversoft.whatever-mail
 productName: WhatEver Mail
 directories:
   buildResources: resources
@@ -18,7 +18,7 @@ extraResources:
 asarUnpack:
   - resources/**
 win:
-  executableName: what-ever-mail
+  executableName: whatever-mail
   target:
     - target: nsis
       arch:

@@ -32,6 +32,26 @@
       --app-t2:      #4a4a6a;
       --app-t3:      #9090b0;
       --app-border:  rgba(0,0,0,0.08);
+
+      /* Hero & code tokens — light */
+      --hero-bg:     linear-gradient(135deg, #f0f0f6 0%, #e8e8f0 100%);
+      --hero-border: rgba(249,115,22,0.15);
+      --hero-glow:   rgba(249,115,22,0.08);
+      --hero-t1:     #1a1a2e;
+      --hero-t2:     #4a4a6a;
+      --code-bg:     #f0f0f6;
+      --code-border: rgba(0,0,0,0.08);
+      --code-t:      #1a1a2e;
+      --code-kw:     #8839ef;
+      --code-str:    #40a02b;
+      --code-num:    #d20f39;
+      --code-cmt:    #9ca0b0;
+      --code-fn:     #1e66f5;
+      --code-obj:    #df8e1d;
+      --code-prop:   #6c6f85;
+      --code-lit:    #1a1a2e;
+      --tab-active-bg: #e8e8f0;
+      --tab-active-t:  #1a1a2e;
     }
 
     html { scroll-behavior: smooth; }
@@ -51,16 +71,12 @@
       height: 56px; display: flex; align-items: center;
       padding: 0 32px; gap: 32px;
     }
-    .nav-logo { font-weight: 700; font-size: 0.95rem; color: var(--t1); text-decoration: none; }
-    .nav-logo .lo-ever { color: var(--accent); }
+    .nav-logo { font-weight: 700; font-size: 1rem; color: var(--t1); text-decoration: none; }
+    .nav-logo .logo-ever { color: var(--accent); }
     .top-nav-links { display: flex; gap: 24px; margin-left: 16px; }
     .top-nav-links a { font-size: 0.82rem; color: var(--t2); text-decoration: none; transition: color .15s; }
     .top-nav-links a:hover { color: var(--t1); }
     .nav-spacer { flex: 1; }
-    .nav-badge {
-      font-size: 0.7rem; padding: 2px 10px; border-radius: 100px;
-      background: var(--accent-soft); color: var(--accent); font-weight: 600;
-    }
 
     /* ─── LAYOUT ─── */
     .doc-layout { display: flex; max-width: 1280px; margin: 0 auto; min-height: calc(100vh - 56px); }
@@ -100,19 +116,19 @@
 
     /* ─── OVERVIEW HERO ─── */
     .overview-hero {
-      background: linear-gradient(135deg, #0d0d11 0%, #1a1a2e 100%);
+      background: var(--hero-bg);
       border-radius: 16px; padding: 40px; margin-bottom: 36px;
-      border: 1px solid rgba(249,115,22,0.2);
+      border: 1px solid var(--hero-border);
       position: relative; overflow: hidden;
     }
     .overview-hero::before {
       content: '';
       position: absolute; top: -60px; right: -60px;
       width: 240px; height: 240px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, var(--hero-glow) 0%, transparent 70%);
     }
-    .overview-hero h3 { font-size: 1.4rem; font-weight: 800; color: #eeeef4; margin-bottom: 10px; }
-    .overview-hero p  { font-size: 0.9rem; color: #8888a8; line-height: 1.7; max-width: 560px; }
+    .overview-hero h3 { font-size: 1.4rem; font-weight: 800; color: var(--hero-t1); margin-bottom: 10px; }
+    .overview-hero p  { font-size: 0.9rem; color: var(--hero-t2); line-height: 1.7; max-width: 560px; }
     .overview-hero .accent { color: var(--accent); font-weight: 600; }
     .overview-tags { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
     .overview-tag {
@@ -156,20 +172,20 @@
 
     /* ─── CODE BLOCK ─── */
     .code-block {
-      background: #0d0d11; border-radius: 10px; padding: 18px 20px;
+      background: var(--code-bg); border-radius: 10px; padding: 18px 20px;
       font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
       line-height: 1.7; overflow-x: auto; margin: 12px 0;
-      border: 1px solid rgba(255,255,255,0.07);
-      white-space: pre; color: #eeeef4; tab-size: 2;
+      border: 1px solid var(--code-border);
+      white-space: pre; color: var(--code-t); tab-size: 2;
     }
-    .code-block .kw  { color: #c792ea; }
-    .code-block .str { color: #c3e88d; }
-    .code-block .num { color: #f78c6c; }
-    .code-block .cmt { color: #546e7a; font-style: italic; }
-    .code-block .fn  { color: #82aaff; }
-    .code-block .obj { color: #ffcb6b; }
-    .code-block .prop { color: #8888a8; }
-    .code-block .lit { color: #eeeef4; }
+    .code-block .kw  { color: var(--code-kw); }
+    .code-block .str { color: var(--code-str); }
+    .code-block .num { color: var(--code-num); }
+    .code-block .cmt { color: var(--code-cmt); font-style: italic; }
+    .code-block .fn  { color: var(--code-fn); }
+    .code-block .obj { color: var(--code-obj); }
+    .code-block .prop { color: var(--code-prop); }
+    .code-block .lit { color: var(--code-lit); }
 
     /* inline code */
     code {
@@ -193,7 +209,8 @@
       box-shadow: 0 12px 32px rgba(249,115,22,0.15);
       border-color: var(--accent);
     }
-    .platform-card .pc-icon { font-size: 2rem; margin-bottom: 10px; }
+    .platform-card .pc-icon { width: 32px; height: 32px; margin-bottom: 10px; color: var(--t2); }
+    .platform-card:hover .pc-icon { color: var(--accent); }
     .platform-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
     .platform-card .pc-label {
       font-size: 0.78rem; color: var(--accent); font-weight: 600;
@@ -387,10 +404,29 @@
         --app-t2:      #8888a8;
         --app-t3:      #55556a;
         --app-border:  rgba(255,255,255,0.07);
+
+        /* Hero & code tokens — dark */
+        --hero-bg:     linear-gradient(135deg, #0d0d11 0%, #1a1a2e 100%);
+        --hero-border: rgba(249,115,22,0.3);
+        --hero-glow:   rgba(249,115,22,0.15);
+        --hero-t1:     #eeeef4;
+        --hero-t2:     #8888a8;
+        --code-bg:     #0d0d11;
+        --code-border: rgba(255,255,255,0.07);
+        --code-t:      #eeeef4;
+        --code-kw:     #c792ea;
+        --code-str:    #c3e88d;
+        --code-num:    #f78c6c;
+        --code-cmt:    #546e7a;
+        --code-fn:     #82aaff;
+        --code-obj:    #ffcb6b;
+        --code-prop:   #8888a8;
+        --code-lit:    #eeeef4;
+        --tab-active-bg: #0d0d11;
+        --tab-active-t:  #eeeef4;
       }
       .top-nav { background: rgba(13,13,17,0.92); }
       code { background: rgba(249,115,22,0.15); }
-      .overview-hero { border-color: rgba(249,115,22,0.3); }
       .mini-ec-hero h4 { color: #fff; }
     }
 
@@ -428,7 +464,7 @@
       font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 500;
       background: var(--bg-panel); color: var(--t3); transition: all .15s;
     }
-    .code-tab.active { background: #0d0d11; color: #eeeef4; }
+    .code-tab.active { background: var(--tab-active-bg); color: var(--tab-active-t); }
     .code-tab-panels { position: relative; }
     .code-tab-panels .code-block { margin-top: 0; border-radius: 0 10px 10px 10px; }
     .code-tab-panel { display: none; }
@@ -439,7 +475,7 @@
 
 <!-- ─── TOP NAV ─── -->
 <nav class="top-nav">
-  <a href="index.html" class="nav-logo">What<span class="lo-ever">Ever</span> Mail</a>
+  <a href="index.html" class="nav-logo">What<span class="logo-ever">Ever</span> Mail</a>
   <div class="top-nav-links">
     <a href="#overview">Overview</a>
     <a href="#install">Install</a>
@@ -448,7 +484,6 @@
     <a href="#faq">FAQ</a>
   </div>
   <div class="nav-spacer"></div>
-  <span class="nav-badge">v0.2</span>
 </nav>
 
 <div class="doc-layout">
@@ -492,7 +527,7 @@
       <div class="overview-hero">
         <h3>Your local inbox. <span class="accent">Ever</span> ready.</h3>
         <p>
-          Point any SMTP-capable app at <code style="background:rgba(249,115,22,.15);color:#fbbf24;">localhost:1025</code> and
+          Point any SMTP-capable app at <code style="background:rgba(249,115,22,.15);color:var(--accent);">localhost:1025</code> and
           watch your emails appear instantly. No accounts. No cloud. No rate limits.
           <span class="accent">Ever</span>-present, <span class="accent">ever</span>-reliable, 100% offline.
         </p>
@@ -534,17 +569,17 @@
 
       <div class="platform-cards">
         <a href="#" class="platform-card">
-          <div class="pc-icon">🍎</div>
+          <svg class="pc-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
           <h4>macOS</h4>
           <span class="pc-label">Download</span>
         </a>
         <a href="#" class="platform-card">
-          <div class="pc-icon">🪟</div>
+          <svg class="pc-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
           <h4>Windows</h4>
           <span class="pc-label">Download</span>
         </a>
         <a href="#" class="platform-card">
-          <div class="pc-icon">🐧</div>
+          <svg class="pc-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.368 1.884 1.43.868.134 1.703-.272 2.191-.574.3-.18.599-.306.9-.36.298-.049.6.002.86.142a.397.397 0 00.54-.168c.36-.63-.45-1.548-1.416-2.062-.466-.268-.963-.39-1.393-.4-.296-.074-.667.07-.897.2-.171-.134-.394-.2-.6-.334l-.002-.003a7.69 7.69 0 01-.749-.867c-.476-.637-.856-1.252-1.337-1.82-.396-.47-.833-.937-1.175-1.585-.068-.13-.2-.333-.235-.467a2.22 2.22 0 01.039-.867c.058-.268.074-.535.066-.802-.01-.669-.2-1.336-.603-2.005-.6-1-.97-2.005-.56-3.473.68-2.44 1.055-5.098-.56-6.565C14.044.197 13.2 0 12.504 0z"/></svg>
           <h4>Linux</h4>
           <span class="pc-label">Download</span>
         </a>
@@ -654,7 +689,7 @@ Hello from WhatEver Mail!
             <div class="mini-mock" style="max-width:460px;">
               <div class="mini-titlebar" style="position:relative;">
                 <div class="mtl mtl-r"></div><div class="mtl mtl-y"></div><div class="mtl mtl-g"></div>
-                <span class="mwm">What <span class="mwm-ever">Ever</span> Mail</span>
+                <span class="mwm">What<span class="mwm-ever">Ever</span> Mail</span>
                 <div class="msmtp"><div class="msmtp-dot"></div>SMTP :1025</div>
               </div>
               <div style="display:flex;height:120px;">
@@ -1102,12 +1137,8 @@ and <span style="color:#f97316;font-weight:500;">every</span> email lands right 
 
 <!-- ─── FOOTER ─── -->
 <div class="doc-footer">
-  <div class="logo">What <span class="le">Ever</span> Mail</div>
-  <div>
-    <a href="index.html">Home</a> &nbsp;·&nbsp;
-    <a href="#">GitHub</a> &nbsp;·&nbsp;
-    <a href="#">Releases</a>
-  </div>
+  <div class="logo">What<span class="le">Ever</span> Mail</div>
+  <a href="https://ever-tools.eversoft.space">EverTools by &copy; Eversoft 2026</a>
   <div>Built for developers. 100% free, <span class="ever">ever</span>.</div>
 </div>
 
@@ -1122,6 +1153,29 @@ and <span style="color:#f97316;font-weight:500;">every</span> email lands right 
       panels.querySelector('#panel-' + tab.getAttribute('data-panel')).classList.add('active');
     });
   });
+
+  /* ─── Scroll spy ─── */
+  (function () {
+    var links = document.querySelectorAll('.sidebar-link');
+    var ids = [];
+    links.forEach(function (a) { ids.push(a.getAttribute('href').slice(1)); });
+
+    var current = ids[0];
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) current = e.target.id;
+      });
+      links.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+  })();
 </script>
 </body>
 </html>

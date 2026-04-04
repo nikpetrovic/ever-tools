@@ -40,13 +40,13 @@ jobs:
       - name: Upload DMG artifact
         uses: actions/upload-artifact@v4
         with:
-          name: what-ever-mail-mac-dmg
+          name: whatever-mail-mac-dmg
           path: repos/what-ever-mail/dist/*.dmg
           if-no-files-found: error
 
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
         with:
-          name: what-ever-mail-mac-zip
+          name: whatever-mail-mac-zip
           path: repos/what-ever-mail/dist/*.zip
           if-no-files-found: error

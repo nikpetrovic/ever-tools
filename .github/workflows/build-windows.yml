@@ -40,13 +40,13 @@ jobs:
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: what-ever-mail-windows-installer
+          name: whatever-mail-windows-installer
           path: repos/what-ever-mail/dist/*.exe
           if-no-files-found: error
 
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
         with:
-          name: what-ever-mail-windows-zip
+          name: whatever-mail-windows-zip
           path: repos/what-ever-mail/dist/*.zip
           if-no-files-found: error

@@ -67,7 +67,7 @@ export default function TitleBar({ onSettingsClick }: TitleBarProps): React.JSX.
     >
       {/* Wordmark — always horizontally centred */}
       <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-bold text-[15px] tracking-[-0.4px] whitespace-nowrap pointer-events-none">
-        <span className="text-fg-1">What </span>
+        <span className="text-fg-1">What</span>
         <span className="text-accent">Ever</span>
         <span className="text-fg-1"> Mail</span>
       </span>
