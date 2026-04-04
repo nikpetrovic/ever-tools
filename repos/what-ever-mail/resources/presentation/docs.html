@@ -448,7 +448,10 @@
       .top-nav-links { display: none; }
       .doc-main { padding: 24px 16px; }
       h2.section-title { font-size: 1.4rem; }
-      .platform-cards { grid-template-columns: 1fr; }
+      .platform-cards { grid-template-columns: repeat(3,1fr); gap: 8px; }
+      .platform-card { padding: 16px 10px; }
+      .platform-card .pc-icon { width: 24px; height: 24px; margin-bottom: 6px; }
+      .platform-card h4 { font-size: 0.78rem; }
       .use-cases { grid-template-columns: 1fr; }
       .overview-hero { padding: 24px; }
       .overview-hero h3 { font-size: 1.1rem; }
@@ -1137,7 +1140,7 @@ and <span style="color:#f97316;font-weight:500;">every</span> email lands right 
 
 <!-- ─── FOOTER ─── -->
 <div class="doc-footer">
-  <div class="logo">What<span class="le">Ever</span> Mail</div>
+  <a href="index.html" class="logo">What<span class="le">Ever</span> Mail</a>
   <a href="https://ever-tools.eversoft.space">EverTools by &copy; Eversoft 2026</a>
   <div>Built for developers. 100% free, <span class="ever">ever</span>.</div>
 </div>
