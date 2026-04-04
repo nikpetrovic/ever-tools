@@ -37,7 +37,7 @@ jobs:
         run: node scripts/bundle-release-notes.mjs linux
 
       - name: Build and package for Linux
-        run: npm run build && electron-builder --linux --x64 && npm run release-notes:cleanup
+        run: npm run build && npx electron-builder --linux --x64 && npm run release-notes:cleanup
 
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v4

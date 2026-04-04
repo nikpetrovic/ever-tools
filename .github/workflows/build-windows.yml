@@ -37,7 +37,7 @@ jobs:
         run: node scripts/bundle-release-notes.mjs win
 
       - name: Build and package for Windows
-        run: npm run build && electron-builder --win --x64 && npm run release-notes:cleanup
+        run: npm run build && npx electron-builder --win --x64 && npm run release-notes:cleanup
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
