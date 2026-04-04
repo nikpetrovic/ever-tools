@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatEver Mail — Local SMTP for Developers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── Page design tokens ─── */
+    :root {
+      --accent:      #f97316;
+      --accent2:     #fbbf24;
+      --accent-soft: rgba(249,115,22,0.14);
+      --grad:        linear-gradient(135deg, #f97316, #fbbf24);
+
+      /* Page surface tokens */
+      --page-bg:     #0d0d11;
+      --page-t1:     #eeeef4;
+      --page-t2:     #8888a8;
+      --page-t3:     #55556a;
+      --page-border: rgba(255,255,255,0.07);
+      --nav-bg:      rgba(13,13,17,0.88);
+      --badge-bg:    rgba(255,255,255,0.04);
+      --footer-t:    #55556a;
+
+      /* App mockup tokens — follow page theme */
+      --app-base:    #0d0d11;
+      --app-panel:   #141418;
+      --app-hover:   rgba(255,255,255,0.04);
+      --app-sel:     rgba(255,255,255,0.07);
+      --app-t1:      #eeeef4;
+      --app-t2:      #8888a8;
+      --app-t3:      #55556a;
+      --app-border:  rgba(255,255,255,0.07);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --page-bg:     #ffffff;
+        --page-t1:     #1a1a2e;
+        --page-t2:     #4a4a6a;
+        --page-t3:     #9090b0;
+        --page-border: rgba(0,0,0,0.08);
+        --nav-bg:      rgba(255,255,255,0.92);
+        --badge-bg:    rgba(0,0,0,0.04);
+        --footer-t:    #9090b0;
+
+        /* App mockup tokens — light */
+        --app-base:    #ffffff;
+        --app-panel:   #f8f8fb;
+        --app-hover:   rgba(0,0,0,0.03);
+        --app-sel:     rgba(0,0,0,0.06);
+        --app-t1:      #1a1a2e;
+        --app-t2:      #4a4a6a;
+        --app-t3:      #9090b0;
+        --app-border:  rgba(0,0,0,0.08);
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--page-bg);
+      color: var(--page-t1);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ─── Gradient text ─── */
+    .ever {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 60px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--page-border);
+    }
+    .nav-logo { font-size: 1rem; font-weight: 700; }
+    .nav-logo .logo-ever { color: #f97316; }
+    .nav-badge {
+      font-size: 0.68rem; padding: 2px 8px; border-radius: 100px;
+      background: rgba(249,115,22,0.12); color: #f97316;
+      font-weight: 600; margin-left: 8px; vertical-align: middle;
+    }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a { color: var(--page-t2); text-decoration: none; font-size: 0.875rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--page-t1); }
+    .nav-cta {
+      padding: 8px 20px; border-radius: 8px;
+      background: var(--grad); color: #fff !important;
+      font-weight: 600; font-size: 0.85rem;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 120px 40px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; width: 800px; height: 500px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.1) 0%, transparent 70%);
+      top: 10%; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 100px;
+      border: 1px solid rgba(249,115,22,0.25); background: rgba(249,115,22,0.07);
+      font-size: 0.78rem; font-weight: 500; color: #f97316; margin-bottom: 28px;
+    }
+    .hero-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #f97316;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.8); } }
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 5.2rem); font-weight: 900;
+      line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 24px;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem); color: var(--page-t2);
+      max-width: 540px; margin: 0 auto 40px; font-weight: 300; line-height: 1.7;
+    }
+    .hero-badges {
+      display: flex; gap: 10px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 64px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 100px;
+      background: var(--badge-bg); border: 1px solid var(--page-border);
+      font-size: 0.8rem; color: var(--page-t2);
+    }
+
+    /* ─── SECTION HEADINGS ─── */
+    .section-label {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #f97316; margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 12px;
+    }
+    .section-sub {
+      font-size: 0.95rem; color: var(--page-t2); max-width: 500px;
+      line-height: 1.7; margin-bottom: 56px;
+    }
+
+    /* ─── PLATFORM FRAMES ─── */
+    #screens { padding: 0 0 100px; max-width: 100%; margin: 0 auto; }
+    .screens-heading { text-align: center; padding: 80px 40px 56px; }
+    .screens-grid {
+      display: flex; align-items: center; overflow-x: auto; scroll-snap-type: x mandatory;
+      gap: 24px; padding: 0 calc(50vw - 440px);
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .screens-grid::-webkit-scrollbar { display: none; }
+    .frame-wrapper {
+      flex: 0 0 880px; scroll-snap-align: center;
+      transition: opacity .4s, transform .4s;
+    }
+    .frame-wrapper.center { transform: none; }
+    .frame-wrapper.side { opacity: 0.82; }
+
+    /* ── macOS chrome ── */
+    .frame-mac {
+      border-radius: 12px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.35), 0 0 0 1px var(--app-border);
+      overflow: hidden; background: var(--app-panel);
+    }
+    .mac-chrome {
+      height: 28px; background: var(--app-panel);
+      display: flex; align-items: center; padding: 0 14px; gap: 7px;
+      border-bottom: 1px solid var(--app-border);
+    }
+    .tl { width: 11px; height: 11px; border-radius: 50%; }
+    .tl-r { background: #ff5f57; }
+    .tl-y { background: #febc2e; }
+    .tl-g { background: #28c840; }
+
+    /* ── Windows chrome ── */
+    .frame-win {
+      border-radius: 6px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.25), 0 0 0 1px var(--app-border);
+      overflow: hidden; background: var(--app-panel);
+    }
+
+    /* ── Linux chrome ── */
+    .frame-linux {
+      border-radius: 10px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.25), 0 0 0 1px var(--app-border);
+      overflow: hidden; background: var(--app-panel);
+    }
+    .linux-chrome {
+      height: 30px; background: var(--app-panel);
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 0 10px; gap: 5px;
+      border-bottom: 1px solid var(--app-border);
+    }
+    .lbtn {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--app-hover);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lbtn svg { display: block; }
+
+    /* ─── APP LAYOUT ─── */
+    .app-shell { display: flex; flex-direction: column; }
+
+    /* TitleBar — h-11 = 44px, bottom border is ACCENT color */
+    .app-titlebar {
+      height: 44px; background: var(--app-panel);
+      border-bottom: 1px solid var(--accent); /* KEY DESIGN DETAIL */
+      display: flex; align-items: center; gap: 10px;
+      flex-shrink: 0; position: relative; user-select: none;
+    }
+    .app-titlebar.mac  { padding: 0 14px 0 76px; } /* 76px left for traffic lights in hiddenInset */
+    .app-titlebar.win  { padding: 0 0 0 10px; }
+    .app-titlebar.linux { padding: 0 14px; }
+
+    /* Wordmark — "What Ever Mail" centered */
+    .wordmark {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      font-size: 0.9rem; font-weight: 700; letter-spacing: -0.02em;
+      white-space: nowrap; pointer-events: none;
+      color: var(--app-t1);
+    }
+    .wordmark .wm-ever { color: var(--accent); }
+
+    /* SMTP pill */
+    .smtp-pill {
+      display: flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 20px;
+      border: 1px solid #10b981; /* emerald-500 */
+      font-size: 0.62rem; font-weight: 500; color: var(--app-t2);
+      font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .smtp-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; flex-shrink: 0; }
+
+    /* Settings btn */
+    .settings-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 6px;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--app-t2); flex-shrink: 0;
+    }
+
+    /* Windows controls */
+    .win-controls { display: flex; height: 44px; margin-left: auto; }
+    .wbtn {
+      width: 44px; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--app-t2); border-left: 1px solid var(--app-border);
+    }
+
+    /* Spacer */
+    .tb-spacer { flex: 1; }
+
+    /* ── App body: sidebar + list + preview ── */
+    .app-body { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .app-sidebar {
+      width: 176px; min-width: 176px;
+      background: var(--app-base);
+      border-right: 1px solid var(--app-border);
+      display: flex; flex-direction: column;
+      padding: 10px 8px; gap: 2px; flex-shrink: 0;
+    }
+    .nav-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 8px;
+      border: none; cursor: pointer; width: 100%;
+      font-size: 0.8rem; font-family: 'Poppins', sans-serif;
+      transition: background .12s, color .12s;
+    }
+    .nav-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+    .nav-btn.inactive { background: transparent; color: var(--app-t2); font-weight: 400; }
+    .nav-badge-pill {
+      margin-left: auto;
+      background: var(--grad); color: #fff;
+      border-radius: 10px; padding: 1px 6px;
+      font-size: 0.68rem; font-weight: 600;
+    }
+    .sidebar-spacer { flex: 1; }
+    .sidebar-theme-section { padding-top: 4px; }
+    .sidebar-divider { border-top: 1px solid var(--app-border); margin: 0 2px; }
+    .sidebar-theme-label {
+      margin: 0; padding: 14px 0 10px;
+      font-size: 0.72rem; font-weight: 600; color: var(--app-t3);
+      text-transform: uppercase; letter-spacing: 0.16em; text-align: center;
+    }
+    .theme-dots { display: flex; gap: 8px; justify-content: center; padding-bottom: 10px; }
+    .tdot {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid transparent;
+    }
+    .tdot-active { transform: scale(1.2); outline: 2px solid var(--app-border); outline-offset: 2px; }
+
+    /* ── Email list ── */
+    .app-list {
+      width: 280px; min-width: 280px;
+      background: var(--app-panel);
+      border-right: 1px solid var(--app-border);
+      display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;
+    }
+    .search-box {
+      padding: 10px 12px 8px;
+      border-bottom: 1px solid var(--app-border); flex-shrink: 0;
+    }
+    .search-inner {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--app-hover); border: 1px solid var(--app-border);
+      border-radius: 8px; padding: 6px 10px; color: var(--app-t3);
+    }
+    .search-inner input {
+      background: transparent; border: none; outline: none;
+      font-size: 0.75rem; color: var(--app-t1);
+      font-family: 'Poppins', sans-serif; width: 100%;
+    }
+    .search-inner input::placeholder { color: var(--app-t3); }
+    .email-rows { flex: 1; overflow-y: auto; }
+
+    /* ── Email row ── */
+    .email-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px; cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background .1s;
+      position: relative;
+    }
+    .email-row.selected { background: var(--accent-soft); border-left-color: var(--accent); }
+    .email-row.unread-row { border-left-color: transparent; }
+    /* Avatar: CIRCLE, 34x34 */
+    .email-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 600; color: #fff; flex-shrink: 0;
+    }
+    .email-row-body { flex: 1; min-width: 0; }
+    .email-row-top { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+    .email-sender { font-size: 0.75rem; color: var(--app-t1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+    .email-sender.bold { font-weight: 600; }
+    .email-sender.normal { font-weight: 400; }
+    .email-time { font-size: 0.62rem; color: var(--app-t3); flex-shrink: 0; }
+    .email-subject { font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 1px; }
+    .email-subject.unread { font-weight: 500; color: var(--app-t1); }
+    .email-subject.read   { font-weight: 400; color: var(--app-t2); }
+    .email-preview { font-size: 0.68rem; color: var(--app-t3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 1px; }
+    /* Unread dot — RIGHT SIDE */
+    .unread-dot-right {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0; margin-top: 5px;
+    }
+
+    /* ── Preview pane ── */
+    .app-preview { flex: 1; display: flex; flex-direction: column; background: var(--app-panel); overflow: hidden; }
+    .preview-header { border-bottom: 1px solid var(--app-border); background: var(--app-panel); flex-shrink: 0; }
+    .preview-meta-area { padding: 14px 20px 10px; }
+    .preview-subject-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .preview-subject { font-size: 0.9rem; font-weight: 600; color: var(--app-t1); line-height: 1.3; }
+    .delete-btn { background: transparent; border: none; cursor: pointer; color: var(--app-t3); padding: 4px; border-radius: 5px; flex-shrink: 0; }
+    .preview-meta-grid { display: grid; grid-template-columns: 48px 1fr; gap: 2px 4px; }
+    .meta-k { font-size: 0.7rem; font-weight: 500; color: var(--app-t2); }
+    .meta-v { font-size: 0.7rem; color: var(--app-t1); }
+    /* Tabs */
+    .preview-tabs { display: flex; padding: 0 20px; gap: 4px; }
+    .ptab {
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      cursor: pointer; padding: 7px 10px 8px;
+      font-size: 0.75rem; font-family: 'Poppins', sans-serif;
+      transition: color .12s, border-color .12s;
+    }
+    .ptab.active { font-weight: 600; color: var(--accent); border-bottom-color: var(--accent); }
+    .ptab.inactive { font-weight: 400; color: var(--app-t2); }
+    /* Preview body */
+    .preview-body { flex: 1; overflow: auto; padding: 16px; background: var(--app-base); }
+
+    /* ── Status bar ── */
+    .app-statusbar {
+      height: 26px; background: var(--app-base);
+      border-top: 1px solid var(--app-border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 14px; flex-shrink: 0;
+    }
+    .sb-text { font-size: 0.68rem; color: var(--app-t3); display: flex; align-items: center; gap: 5px; font-family: 'IBM Plex Mono', monospace; }
+    .sb-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+
+    /* ─── Rich email content inside preview ─── */
+    .email-content {
+      background: #fff; border-radius: 10px; overflow: hidden;
+      font-family: 'Poppins', sans-serif; font-size: 13px;
+    }
+    .ec-hero {
+      background: linear-gradient(135deg, #f97316, #fbbf24);
+      padding: 26px 22px; text-align: center;
+    }
+    .ec-hero h2 { color: #fff; font-size: 1rem; font-weight: 800; margin-bottom: 5px; line-height: 1.3; }
+    .ec-hero p  { color: rgba(255,255,255,0.88); font-size: 0.72rem; }
+    .ec-body { padding: 16px 20px; }
+    .ec-body p { font-size: 0.72rem; color: #1a1a2e; line-height: 1.65; margin-bottom: 14px; }
+    .ec-body strong { color: #f97316; }
+    .ec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .ec-card { padding: 11px 12px; border-radius: 7px; border-left: 3px solid; }
+    .ec-card-em { background: #fff7ed; border-color: #f97316; }
+    .ec-card-ja { background: #f0fdf4; border-color: #10b981; }
+    .ec-card-az { background: #eff6ff; border-color: #3b82f6; }
+    .ec-card-pu { background: #fdf4ff; border-color: #a855f7; }
+    .ec-card em { font-style: normal; font-size: 1rem; display: block; margin-bottom: 3px; }
+    .ec-card strong { font-size: 0.7rem; font-weight: 700; color: #1a1a2e; display: block; }
+    .ec-card span { font-size: 0.62rem; color: #5a5a7a; }
+    .ec-footer {
+      padding: 10px 20px; border-top: 1px solid #e5e7eb;
+      font-size: 0.62rem; color: #9090b0; text-align: center;
+    }
+    .ec-footer strong { color: #f97316; }
+
+    /* ─── Plain text email ─── */
+    .plaintext-view {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; color: var(--app-t2);
+      line-height: 1.8; white-space: pre-wrap;
+    }
+    .pt-ever { color: var(--accent); font-weight: 500; }
+
+    /* ─── FRAME SIZE HELPERS ─── */
+    .app-shell.tall { height: 700px; }
+    .app-shell.mid  { height: 700px; }
+    .app-shell.short { height: 700px; }
+
+    /* ─── FEATURES ─── */
+    #features {
+      background: var(--badge-bg); border-top: 1px solid var(--page-border);
+      border-bottom: 1px solid var(--page-border);
+      padding: 80px 40px;
+    }
+    #features .inner { max-width: 1200px; margin: 0 auto; }
+    .features-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+    .feature-card {
+      padding: 32px 24px;
+      border-right: 1px solid var(--page-border);
+    }
+    .feature-card:last-child { border-right: none; }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+      background: rgba(249,115,22,0.1); margin-bottom: 16px;
+    }
+    .feature-title { font-size: 0.95rem; font-weight: 700; color: var(--page-t1); margin-bottom: 8px; }
+    .feature-desc  { font-size: 0.82rem; color: var(--page-t2); line-height: 1.6; }
+
+    /* ─── CTA ─── */
+    #cta {
+      text-align: center; padding: 120px 40px;
+      position: relative; overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute; width: 600px; height: 400px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.07) 0%, transparent 70%);
+      bottom: 0; left: 50%; transform: translateX(-50%); pointer-events: none;
+    }
+    .cta-lines { max-width: 880px; margin: 0 auto 52px; }
+    .cta-line {
+      font-size: clamp(1.6rem, 4vw, 3.1rem); font-weight: 800;
+      letter-spacing: -0.025em; line-height: 1.2; color: var(--page-t2); margin-bottom: 6px;
+    }
+    .cta-line span { color: var(--page-t1); }
+    .cta-final {
+      font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 900;
+      letter-spacing: -0.03em; line-height: 1.1; color: var(--page-t1); margin-top: 22px;
+    }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 10px; background: var(--grad);
+      color: #fff; font-weight: 700; font-size: 0.95rem; text-decoration: none; border: none; cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 10px; background: transparent;
+      color: var(--page-t2); font-weight: 600; font-size: 0.95rem; text-decoration: none;
+      border: 1px solid var(--page-border); cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--page-border);
+      padding: 28px 40px; display: flex;
+      align-items: center; justify-content: space-between;
+      color: var(--page-t3); font-size: 0.8rem;
+    }
+    .footer-logo { font-weight: 700; font-size: 0.9rem; color: var(--page-t2); }
+    .footer-logo .lo-ever { color: #f97316; }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { color: var(--page-t3); text-decoration: none; }
+    .footer-links a:hover { color: var(--page-t2); }
+
+    /* ─── SCROLL INDICATORS ─── */
+    .scroll-dots {
+      display: flex; justify-content: center; gap: 8px;
+      padding: 24px 0 0;
+    }
+    .scroll-dot {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 16px; border-radius: 100px;
+      background: var(--badge-bg); border: 1px solid var(--page-border);
+      cursor: pointer; transition: all .25s;
+      font-family: 'Poppins', sans-serif; font-size: 0.8rem; font-weight: 500;
+      color: var(--page-t3);
+    }
+    .scroll-dot svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .scroll-dot.active {
+      background: var(--accent-soft); border-color: rgba(249,115,22,0.3);
+      color: var(--accent);
+    }
+    .scroll-dot.active svg { fill: var(--accent); }
+
+    /* ─── FADE-IN ON SCROLL ─── */
+    .fade-in {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .6s ease-out, transform .6s ease-out;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    /* Side frames keep their dimmed look on desktop even after fade-in */
+    .frame-wrapper.side.visible { opacity: 0.82; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      nav { padding: 0 20px; }
+      .nav-links { gap: 16px; }
+      #hero { padding: 100px 24px 60px; }
+      #screens { padding: 0 0 60px; }
+      .screens-heading { padding: 60px 24px 40px; }
+
+      .screens-grid { gap: 16px; padding: 0 24px; }
+      .frame-wrapper { flex: 0 0 85vw; }
+      .frame-wrapper.side { opacity: 1; }
+      .frame-wrapper.side.visible { opacity: 1; }
+
+      /* Scale down mockup internals so frames don't overflow */
+      .app-sidebar { width: 120px; min-width: 120px; padding: 8px 6px; }
+      .app-list { width: 180px; min-width: 180px; }
+      .app-titlebar.mac { padding: 0 10px 0 56px; }
+      .wordmark { font-size: 0.75rem; }
+      .smtp-pill { font-size: 0.55rem; padding: 2px 7px; }
+      .app-shell.tall { height: 520px; }
+      .app-shell.mid  { height: 520px; }
+      .app-shell.short { height: 520px; }
+
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .feature-card { border-right: none; border-bottom: 1px solid var(--page-border); }
+      .feature-card:nth-child(odd) { border-right: 1px solid var(--page-border); }
+      .feature-card:nth-last-child(-n+2) { border-bottom: none; }
+
+      #cta { padding: 80px 24px; }
+      footer { padding: 24px 20px; flex-wrap: wrap; gap: 12px; justify-content: center; text-align: center; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+      h1 { font-size: 2.2rem; }
+      .hero-badges { gap: 6px; }
+      .badge { font-size: 0.72rem; padding: 5px 10px; }
+
+      .frame-wrapper { flex: 0 0 92vw; }
+
+      /* Hide sidebar & list on small screens — show only preview */
+      .app-sidebar { display: none; }
+      .app-list { display: none; }
+      .app-shell.tall { height: 560px; }
+      .app-shell.mid  { height: 560px; }
+      .app-shell.short { height: 560px; }
+
+      /* Plain text section */
+      div[style*="max-width:1000px"] { padding: 0 16px 60px !important; }
+
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card { border-right: none !important; }
+      .feature-card:last-child { border-bottom: none; }
+
+      #features { padding: 60px 20px; }
+      .cta-btns { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo">
+    What<span class="logo-ever">Ever</span> Mail
+    <span class="nav-badge">v0.2</span>
+  </div>
+  <div class="nav-links">
+    <a href="#screens">Screenshots</a>
+    <a href="#features">Features</a>
+    <a href="docs.html">Docs</a>
+    <a href="#cta" class="nav-cta">Get it free</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">
+    <div class="hero-dot"></div>
+    Local SMTP · Zero config · Open source
+  </div>
+  <h1>
+    What<span class="ever">ever</span> you send,<br>catch it locally.
+  </h1>
+  <p class="hero-sub">
+    A beautiful desktop email catcher for developers.
+    Point your app at
+    <code style="font-family:'IBM Plex Mono',monospace;font-size:.9em;background:rgba(255,255,255,.05);padding:2px 8px;border-radius:4px;color:#f97316;">localhost:1025</code>
+    and <span class="ever">every</span> email lands right here.
+  </p>
+  <div class="hero-badges">
+    <div class="badge">🚫 No account needed</div>
+    <div class="badge">📡 100% offline</div>
+    <div class="badge">🖥️ macOS · Windows · Linux</div>
+    <div class="badge">⚡ Instant capture</div>
+    <div class="badge">🎨 5 accent themes</div>
+  </div>
+</section>
+
+<!-- ─── PLATFORM SCREENS ─── -->
+<div id="screens">
+  <div class="screens-heading">
+    <div class="section-label">Cross-platform</div>
+    <h2 class="section-title">One app. <span class="ever">Every</span> platform.</h2>
+    <p class="section-sub" style="margin:0 auto;">
+      Native builds for macOS, Windows and Linux — the same beautiful experience
+      <span class="ever">wherever</span> you develop.
+    </p>
+  </div>
+
+  <div class="screens-grid">
+
+    <!-- ══════════════ WINDOWS ══════════════ -->
+    <div class="frame-wrapper side fade-in">
+      <div class="frame-win">
+        <div class="app-shell short">
+          <!-- No separate chrome — Windows titlebar is part of app -->
+          <div class="app-titlebar win">
+            <!-- Windows: SMTP left | spacer | settings | WinControls -->
+            <div class="smtp-pill"><div class="smtp-dot"></div>SMTP :1025</div>
+            <div class="wordmark">What<span class="wm-ever">Ever</span> Mail</div>
+            <div class="tb-spacer"></div>
+            <!-- Settings -->
+            <div class="settings-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </div>
+            <!-- Windows controls -->
+            <div class="win-controls">
+              <div class="wbtn">
+                <svg width="10" height="1" viewBox="0 0 10 1" fill="currentColor"><rect width="10" height="1"/></svg>
+              </div>
+              <div class="wbtn">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.1"><rect x=".5" y=".5" width="9" height="9"/></svg>
+              </div>
+              <div class="wbtn close">
+                <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><line x1="0" y1="0" x2="10" y2="10"/><line x1="10" y1="0" x2="0" y2="10"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="app-body">
+            <!-- Sidebar -->
+            <div class="app-sidebar">
+              <button class="nav-btn active">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+                  <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+                </svg>
+                Inbox <span style="margin-left:auto;font-size:0.68rem;font-weight:600;color:var(--app-t1);">5</span>
+              </button>
+              <button class="nav-btn inactive">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+                Trash
+              </button>
+              <div class="sidebar-spacer"></div>
+              <div class="sidebar-theme-section">
+                <div class="sidebar-divider"></div>
+                <p class="sidebar-theme-label">Theme</p>
+                <div class="theme-dots">
+                  <div class="tdot tdot-active" style="background:#f97316;border-color:#f97316;"></div>
+                  <div class="tdot" style="background:#6366f1;"></div>
+                  <div class="tdot" style="background:#10b981;"></div>
+                  <div class="tdot" style="background:#f43f5e;"></div>
+                  <div class="tdot" style="background:#0ea5e9;"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Email list -->
+            <div class="app-list">
+              <div class="search-box">
+                <div class="search-inner">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" placeholder="Search…" readonly />
+                </div>
+              </div>
+              <div class="email-rows">
+                <div class="email-row selected">
+                  <div class="email-avatar" style="background:var(--grad);">HE</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender bold">hello@everideas.co</span>
+                      <span class="email-time">2m ago</span>
+                    </div>
+                    <div class="email-subject read">Everything you've ever dreamed…</div>
+                    <div class="email-preview">Ever notice how the best ideas start…</div>
+                  </div>
+                </div>
+                <div class="email-row unread-row">
+                  <div class="email-avatar" style="background:hsl(142,65%,42%);">AL</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender bold">alice@team.dev</span>
+                      <span class="email-time">15m ago</span>
+                    </div>
+                    <div class="email-subject unread">Ever tried local SMTP?</div>
+                    <div class="email-preview">No account needed, no rate limits…</div>
+                  </div>
+                  <div class="unread-dot-right"></div>
+                </div>
+                <div class="email-row">
+                  <div class="email-avatar" style="background:hsl(210,65%,48%);">NO</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender normal">noreply@evermore.io</span>
+                      <span class="email-time">1h ago</span>
+                    </div>
+                    <div class="email-subject read">Your ever-present opportunity…</div>
+                    <div class="email-preview">The best moment is always now</div>
+                  </div>
+                </div>
+                <div class="email-row">
+                  <div class="email-avatar" style="background:hsl(270,65%,52%);">BU</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender normal">build@everdeploy.sh</span>
+                      <span class="email-time">3h ago</span>
+                    </div>
+                    <div class="email-subject read">Deploy success — ever reliable</div>
+                    <div class="email-preview">Build #42 passed all checks</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Preview -->
+            <div class="app-preview">
+              <div class="preview-header">
+                <div class="preview-meta-area">
+                  <div class="preview-subject-row">
+                    <div class="preview-subject">Everything you've ever dreamed is within reach</div>
+                    <button class="delete-btn">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                    </button>
+                  </div>
+                  <div class="preview-meta-grid">
+                    <span class="meta-k">From</span><span class="meta-v">hello@everideas.co</span>
+                    <span class="meta-k">To</span><span class="meta-v">you@yourapp.dev</span>
+                    <span class="meta-k">Date</span><span class="meta-v dynamic-date"></span>
+                  </div>
+                </div>
+                <div class="preview-tabs">
+                  <button class="ptab active">HTML</button>
+                  <button class="ptab inactive">Text</button>
+                  <button class="ptab inactive">Source</button>
+                  <button class="ptab inactive">Headers</button>
+                </div>
+              </div>
+              <div class="preview-body">
+                <div class="email-content">
+                  <div class="ec-hero">
+                    <h2>What<strong>ever</strong> you imagine —</h2>
+                    <p>you can build it. You can send it. You can share it.</p>
+                  </div>
+                  <div class="ec-body">
+                    <p><strong>Ever</strong> notice how the best ideas start with a single message? Just pure, <strong>ever-present</strong> possibility.</p>
+                    <div class="ec-grid">
+                      <div class="ec-card ec-card-em"><em>🌱</em><strong>Ever growing</strong><span>Every idea deserves to bloom.</span></div>
+                      <div class="ec-card ec-card-ja"><em>✨</em><strong>Ever forward</strong><span>Progress, one send at a time.</span></div>
+                    </div>
+                  </div>
+                  <div class="ec-footer">Captured by <strong>WhatEver Mail</strong> · smtp://localhost:1025</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="app-statusbar">
+            <div class="sb-text"><div class="sb-dot"></div>SMTP :1025 listening</div>
+            <div class="sb-text">5 emails</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:16px;font-size:.95rem;font-weight:500;color:var(--page-t2);display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+        Windows
+      </div>
+    </div>
+
+    <!-- ══════════════ macOS — FEATURED (center) ══════════════ -->
+    <div class="frame-wrapper center fade-in">
+      <div class="frame-mac">
+        <!-- macOS chrome bar (traffic lights) -->
+        <div class="mac-chrome">
+          <div class="tl tl-r"></div>
+          <div class="tl tl-y"></div>
+          <div class="tl tl-g"></div>
+        </div>
+        <div class="app-shell tall">
+          <div class="app-titlebar mac">
+            <!-- macOS: spacer | SMTP | Settings (traffic lights handled by hiddenInset/mac-chrome above) -->
+            <div class="wordmark">What<span class="wm-ever">Ever</span> Mail</div>
+            <div class="tb-spacer"></div>
+            <div class="smtp-pill"><div class="smtp-dot"></div>SMTP :1025</div>
+            <div class="settings-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="app-body">
+            <div class="app-sidebar">
+              <button class="nav-btn active">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+                  <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+                </svg>
+                Inbox <span style="margin-left:auto;font-size:0.68rem;font-weight:600;color:var(--app-t1);">5</span>
+              </button>
+              <button class="nav-btn inactive">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+                Trash
+              </button>
+              <div class="sidebar-spacer"></div>
+              <div class="sidebar-theme-section">
+                <div class="sidebar-divider"></div>
+                <p class="sidebar-theme-label">Theme</p>
+                <div class="theme-dots">
+                  <div class="tdot tdot-active" style="background:#f97316;border-color:#f97316;"></div>
+                  <div class="tdot" style="background:#6366f1;"></div>
+                  <div class="tdot" style="background:#10b981;"></div>
+                  <div class="tdot" style="background:#f43f5e;"></div>
+                  <div class="tdot" style="background:#0ea5e9;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="app-list">
+              <div class="search-box">
+                <div class="search-inner">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" placeholder="Search…" readonly />
+                </div>
+              </div>
+              <div class="email-rows">
+                <div class="email-row selected">
+                  <div class="email-avatar" style="background:var(--grad);">HE</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender bold">hello@everideas.co</span>
+                      <span class="email-time">2m ago</span>
+                    </div>
+                    <div class="email-subject read">Everything you've ever dreamed…</div>
+                    <div class="email-preview">Ever notice how the best ideas start…</div>
+                  </div>
+                </div>
+                <div class="email-row unread-row">
+                  <div class="email-avatar" style="background:hsl(142,65%,42%);">AL</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender bold">alice@team.dev</span>
+                      <span class="email-time">15m ago</span>
+                    </div>
+                    <div class="email-subject unread">Ever tried local SMTP?</div>
+                    <div class="email-preview">No account needed, no rate limits…</div>
+                  </div>
+                  <div class="unread-dot-right"></div>
+                </div>
+                <div class="email-row">
+                  <div class="email-avatar" style="background:hsl(210,65%,48%);">NO</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender normal">noreply@evermore.io</span>
+                      <span class="email-time">1h ago</span>
+                    </div>
+                    <div class="email-subject read">Your ever-present opportunity…</div>
+                    <div class="email-preview">The best moment is always now</div>
+                  </div>
+                </div>
+                <div class="email-row">
+                  <div class="email-avatar" style="background:hsl(270,65%,52%);">BU</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender normal">build@everdeploy.sh</span>
+                      <span class="email-time">3h ago</span>
+                    </div>
+                    <div class="email-subject read">Deploy success — ever reliable</div>
+                    <div class="email-preview">Build #42 passed all checks</div>
+                  </div>
+                </div>
+                <div class="email-row">
+                  <div class="email-avatar" style="background:hsl(340,65%,50%);">TE</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender normal">team@everlearn.app</span>
+                      <span class="email-time">Yesterday</span>
+                    </div>
+                    <div class="email-subject read">This week's ever-growing stats</div>
+                    <div class="email-preview">You've grown 24% this month 🚀</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="app-preview">
+              <div class="preview-header">
+                <div class="preview-meta-area">
+                  <div class="preview-subject-row">
+                    <div class="preview-subject">Everything you've ever dreamed is within reach</div>
+                    <button class="delete-btn">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                    </button>
+                  </div>
+                  <div class="preview-meta-grid">
+                    <span class="meta-k">From</span><span class="meta-v">hello@everideas.co</span>
+                    <span class="meta-k">To</span><span class="meta-v">you@yourapp.dev</span>
+                    <span class="meta-k">Date</span><span class="meta-v dynamic-date"></span>
+                  </div>
+                </div>
+                <div class="preview-tabs">
+                  <button class="ptab active">HTML</button>
+                  <button class="ptab inactive">Text</button>
+                  <button class="ptab inactive">Source</button>
+                  <button class="ptab inactive">Headers</button>
+                </div>
+              </div>
+              <div class="preview-body">
+                <div class="email-content">
+                  <div class="ec-hero">
+                    <h2>What<strong>ever</strong> you imagine —</h2>
+                    <p>you can build it. You can send it. You can share it.</p>
+                  </div>
+                  <div class="ec-body">
+                    <p><strong>Ever</strong> notice how the best ideas start with a single message? This email was captured locally — no cloud, no credentials, no rate limits. Just pure, <strong>ever-present</strong> possibility.</p>
+                    <div class="ec-grid">
+                      <div class="ec-card ec-card-em"><em>🌱</em><strong>Ever growing</strong><span>Every idea deserves to bloom.</span></div>
+                      <div class="ec-card ec-card-ja"><em>✨</em><strong>Ever forward</strong><span>Progress, one send at a time.</span></div>
+                      <div class="ec-card ec-card-az"><em>🚀</em><strong>Ever ready</strong><span>Your stack, zero friction.</span></div>
+                      <div class="ec-card ec-card-pu"><em>💌</em><strong>Ever sent</strong><span>Catch every email. Miss nothing.</span></div>
+                    </div>
+                  </div>
+                  <div class="ec-footer">Captured by <strong>WhatEver Mail</strong> · smtp://localhost:1025</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="app-statusbar">
+            <div class="sb-text"><div class="sb-dot"></div>SMTP :1025 listening</div>
+            <div class="sb-text">5 emails</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:16px;font-size:.95rem;font-weight:500;color:var(--page-t2);display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        macOS
+        <span style="color:#f97316;font-size:.7rem;font-weight:600;background:rgba(249,115,22,.1);padding:2px 10px;border-radius:100px;">Featured</span>
+      </div>
+    </div>
+
+    <!-- ══════════════ LINUX ══════════════ -->
+    <div class="frame-wrapper side fade-in">
+      <div class="frame-linux">
+        <div class="linux-chrome">
+          <div class="lbtn">
+            <svg width="7" height="7" viewBox="0 0 10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
+          </div>
+        </div>
+        <div class="app-shell short">
+          <div class="app-titlebar linux">
+            <div class="wordmark">What<span class="wm-ever">Ever</span> Mail</div>
+            <div class="tb-spacer"></div>
+            <div class="smtp-pill"><div class="smtp-dot"></div>SMTP :1025</div>
+            <div class="settings-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="app-body">
+            <div class="app-sidebar">
+              <button class="nav-btn active">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+                  <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+                </svg>
+                Inbox <span style="margin-left:auto;font-size:0.68rem;font-weight:600;color:var(--app-t1);">5</span>
+              </button>
+              <button class="nav-btn inactive">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+                Trash
+              </button>
+              <div class="sidebar-spacer"></div>
+              <div class="sidebar-theme-section">
+                <div class="sidebar-divider"></div>
+                <p class="sidebar-theme-label">Theme</p>
+                <div class="theme-dots">
+                  <div class="tdot tdot-active" style="background:#f97316;border-color:#f97316;"></div>
+                  <div class="tdot" style="background:#6366f1;"></div>
+                  <div class="tdot" style="background:#10b981;"></div>
+                  <div class="tdot" style="background:#f43f5e;"></div>
+                  <div class="tdot" style="background:#0ea5e9;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="app-list">
+              <div class="search-box">
+                <div class="search-inner">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" placeholder="Search…" readonly />
+                </div>
+              </div>
+              <div class="email-rows">
+                <div class="email-row selected">
+                  <div class="email-avatar" style="background:var(--grad);">HE</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender bold">hello@everideas.co</span>
+                      <span class="email-time">2m ago</span>
+                    </div>
+                    <div class="email-subject unread">Everything you've ever dreamed…</div>
+                    <div class="email-preview">Ever notice how the best ideas…</div>
+                  </div>
+                </div>
+                <div class="email-row unread-row">
+                  <div class="email-avatar" style="background:hsl(142,65%,42%);">AL</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender bold">alice@team.dev</span>
+                      <span class="email-time">15m ago</span>
+                    </div>
+                    <div class="email-subject unread">Ever tried local SMTP?</div>
+                    <div class="email-preview">No account needed, no rate limits…</div>
+                  </div>
+                  <div class="unread-dot-right"></div>
+                </div>
+                <div class="email-row">
+                  <div class="email-avatar" style="background:hsl(210,65%,48%);">NO</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender normal">noreply@evermore.io</span>
+                      <span class="email-time">1h ago</span>
+                    </div>
+                    <div class="email-subject read">Your ever-present opportunity…</div>
+                    <div class="email-preview">The best moment is always now</div>
+                  </div>
+                </div>
+                <div class="email-row">
+                  <div class="email-avatar" style="background:hsl(270,65%,52%);">BU</div>
+                  <div class="email-row-body">
+                    <div class="email-row-top">
+                      <span class="email-sender normal">build@everdeploy.sh</span>
+                      <span class="email-time">3h ago</span>
+                    </div>
+                    <div class="email-subject read">Deploy success — ever reliable</div>
+                    <div class="email-preview">Build #42 passed all checks</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="app-preview">
+              <div class="preview-header">
+                <div class="preview-meta-area">
+                  <div class="preview-subject-row">
+                    <div class="preview-subject">Everything you've ever dreamed is within reach</div>
+                    <button class="delete-btn">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                    </button>
+                  </div>
+                  <div class="preview-meta-grid">
+                    <span class="meta-k">From</span><span class="meta-v">hello@everideas.co</span>
+                    <span class="meta-k">To</span><span class="meta-v">you@yourapp.dev</span>
+                    <span class="meta-k">Date</span><span class="meta-v dynamic-date"></span>
+                  </div>
+                </div>
+                <div class="preview-tabs">
+                  <button class="ptab active">HTML</button>
+                  <button class="ptab inactive">Text</button>
+                  <button class="ptab inactive">Source</button>
+                  <button class="ptab inactive">Headers</button>
+                </div>
+              </div>
+              <div class="preview-body">
+                <div class="email-content">
+                  <div class="ec-hero">
+                    <h2>What<strong>ever</strong> you imagine —</h2>
+                    <p>you can build it. You can send it. You can share it.</p>
+                  </div>
+                  <div class="ec-body">
+                    <p><strong>Ever</strong> notice how the best ideas start with a single message? Just pure, <strong>ever-present</strong> possibility.</p>
+                    <div class="ec-grid">
+                      <div class="ec-card ec-card-em"><em>🌱</em><strong>Ever growing</strong><span>Every idea deserves to bloom.</span></div>
+                      <div class="ec-card ec-card-ja"><em>✨</em><strong>Ever forward</strong><span>Progress, one send at a time.</span></div>
+                    </div>
+                  </div>
+                  <div class="ec-footer">Captured by <strong>WhatEver Mail</strong> · smtp://localhost:1025</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="app-statusbar">
+            <div class="sb-text"><div class="sb-dot"></div>SMTP :1025 listening</div>
+            <div class="sb-text">5 emails</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:16px;font-size:.95rem;font-weight:500;color:var(--page-t2);display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.368 1.884 1.43.868.134 1.703-.272 2.191-.574.3-.18.599-.306.9-.36.298-.049.6.002.86.142a.397.397 0 00.54-.168c.36-.63-.45-1.548-1.416-2.062-.466-.268-.963-.39-1.393-.4-.296-.074-.667.07-.897.2-.171-.134-.394-.2-.6-.334l-.002-.003a7.69 7.69 0 01-.749-.867c-.476-.637-.856-1.252-1.337-1.82-.396-.47-.833-.937-1.175-1.585-.068-.13-.2-.333-.235-.467a2.22 2.22 0 01.039-.867c.058-.268.074-.535.066-.802-.01-.669-.2-1.336-.603-2.005-.6-1-.97-2.005-.56-3.473.68-2.44 1.055-5.098-.56-6.565C14.044.197 13.2 0 12.504 0z"/></svg>
+        Linux
+      </div>
+    </div>
+
+  </div><!-- /screens-grid -->
+  <div class="scroll-dots" id="scroll-dots">
+    <button class="scroll-dot" data-index="0" aria-label="Windows">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+      Windows
+    </button>
+    <button class="scroll-dot active" data-index="1" aria-label="macOS">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      macOS
+    </button>
+    <button class="scroll-dot" data-index="2" aria-label="Linux">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.368 1.884 1.43.868.134 1.703-.272 2.191-.574.3-.18.599-.306.9-.36.298-.049.6.002.86.142a.397.397 0 00.54-.168c.36-.63-.45-1.548-1.416-2.062-.466-.268-.963-.39-1.393-.4-.296-.074-.667.07-.897.2-.171-.134-.394-.2-.6-.334l-.002-.003a7.69 7.69 0 01-.749-.867c-.476-.637-.856-1.252-1.337-1.82-.396-.47-.833-.937-1.175-1.585-.068-.13-.2-.333-.235-.467a2.22 2.22 0 01.039-.867c.058-.268.074-.535.066-.802-.01-.669-.2-1.336-.603-2.005-.6-1-.97-2.005-.56-3.473.68-2.44 1.055-5.098-.56-6.565C14.044.197 13.2 0 12.504 0z"/></svg>
+      Linux
+    </button>
+  </div>
+</div>
+
+<!-- ─── PLAIN TEXT ─── -->
+<div style="padding:0 40px 100px;max-width:1000px;margin:0 auto;">
+  <div style="text-align:center;margin-bottom:40px;">
+    <div class="section-label">Plain Text</div>
+    <h2 class="section-title">Not just HTML. <span class="ever">Every</span> format.</h2>
+    <p class="section-sub" style="margin:0 auto;">
+      Switch between HTML, Text, Source and Headers with a single click.
+      <span class="ever">Every</span> view of <span class="ever">every</span> email.
+    </p>
+  </div>
+  <div class="frame-mac" style="max-width:820px;margin:0 auto;">
+    <div class="mac-chrome">
+      <div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div>
+    </div>
+    <div class="app-shell mid">
+      <div class="app-titlebar mac">
+        <div class="wordmark">What<span class="wm-ever">Ever</span> Mail</div>
+        <div class="tb-spacer"></div>
+        <div class="smtp-pill"><div class="smtp-dot"></div>SMTP :1025</div>
+        <div class="settings-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+      </div>
+      <div class="app-body">
+        <div class="app-sidebar">
+          <button class="nav-btn active">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            Inbox <span style="margin-left:auto;font-size:0.68rem;font-weight:600;color:var(--app-t1);">1</span>
+          </button>
+          <button class="nav-btn inactive">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            Trash
+          </button>
+          <div class="sidebar-spacer"></div>
+          <div class="sidebar-theme-section">
+            <div class="sidebar-divider"></div>
+            <p class="sidebar-theme-label">Theme</p>
+            <div class="theme-dots">
+              <div class="tdot tdot-active" style="background:#f97316;border-color:#f97316;"></div>
+              <div class="tdot" style="background:#6366f1;"></div>
+              <div class="tdot" style="background:#10b981;"></div>
+              <div class="tdot" style="background:#f43f5e;"></div>
+              <div class="tdot" style="background:#0ea5e9;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="app-list">
+          <div class="search-box">
+            <div class="search-inner">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Search…" readonly />
+            </div>
+          </div>
+          <div class="email-rows">
+            <div class="email-row selected">
+              <div class="email-avatar" style="background:var(--grad);">AL</div>
+              <div class="email-row-body">
+                <div class="email-row-top">
+                  <span class="email-sender bold">alice@team.dev</span>
+                  <span class="email-time">15m ago</span>
+                </div>
+                <div class="email-subject unread">Quick note — ever tried local SMTP?</div>
+                <div class="email-preview">No account needed, no rate limits…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app-preview">
+          <div class="preview-header">
+            <div class="preview-meta-area">
+              <div class="preview-subject-row">
+                <div class="preview-subject">Quick note — ever tried local SMTP?</div>
+                <button class="delete-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+              </div>
+              <div class="preview-meta-grid">
+                <span class="meta-k">From</span><span class="meta-v">alice@team.dev</span>
+                <span class="meta-k">To</span><span class="meta-v">dev@yourapp.local</span>
+                <span class="meta-k">Date</span><span class="meta-v dynamic-date"></span>
+              </div>
+            </div>
+            <div class="preview-tabs">
+              <button class="ptab inactive">HTML</button>
+              <button class="ptab active">Text</button>
+              <button class="ptab inactive">Source</button>
+              <button class="ptab inactive">Headers</button>
+            </div>
+          </div>
+          <div class="preview-body">
+<div class="plaintext-view">From: alice@team.dev
+To: dev@yourapp.local
+Subject: Quick note — <span class="pt-ever">ever</span> tried local SMTP?
+
+Hey,
+
+Just wanted to check — have you <span class="pt-ever">ever</span> tried running
+your email flow locally? No account needed, no
+rate limits, no shared inbox drama.
+
+Point your app at localhost:1025 and <span class="pt-ever">every</span> email
+lands right in your dev environment. <span class="pt-ever">Ever</span>-reliable,
+<span class="pt-ever">ever</span>-local, <span class="pt-ever">ever</span> yours.
+
+Let me know if you need help setting it up.
+
+— Alice
+
+--
+Sent via WhatEver Mail (local dev SMTP capture)
+smtp://localhost:1025</div>
+          </div>
+        </div>
+      </div>
+      <div class="app-statusbar">
+        <div class="sb-text"><div class="sb-dot"></div>SMTP :1025 listening</div>
+        <div class="sb-text">1 email</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FEATURES ─── -->
+<div id="features">
+  <div class="inner">
+    <div style="text-align:center;margin-bottom:52px;">
+      <div class="section-label">Built for developers</div>
+      <h2 class="section-title"><span class="ever">Every</span> feature you need. Nothing you don't.</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🚫</div>
+        <div class="feature-title">No account, ever</div>
+        <div class="feature-desc">Zero sign-up, zero cloud. WhatEver Mail runs entirely on your machine. Your emails never leave your desk.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Ever-instant capture</div>
+        <div class="feature-desc">Emails appear the moment they're sent. Sub-second delivery from your app to your inbox, every time.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-title">5 themes, ever your style</div>
+        <div class="feature-desc">Ember, Midnight, Jade, Rose, Azure. Switch themes instantly. Your dev environment, ever yours.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Every view covered</div>
+        <div class="feature-desc">HTML preview, plain text, raw source, parsed headers. See every email from every angle. Ever complete.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CTA ─── -->
+<div id="cta">
+  <div class="cta-glow"></div>
+  <div class="cta-lines">
+    <div class="cta-line">What<span class="ever">ever</span> inspires you</div>
+    <div class="cta-line">What<span class="ever">ever</span> you build</div>
+    <div class="cta-line">What<span class="ever">ever</span> your team needs to know</div>
+    <div class="cta-final">Send it. What<span class="ever">Ever</span> Mail.</div>
+  </div>
+  <div class="cta-btns">
+    <a href="#" class="btn-primary">⬇ Get it free — macOS</a>
+    <a href="docs.html" class="btn-ghost">Read the docs</a>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-logo">What<span class="lo-ever">Ever</span> Mail</div>
+  <div class="footer-links">
+    <a href="docs.html">Documentation</a>
+  </div>
+  <div style="color:var(--page-t3);font-size:.75rem;">Built for developers. 100% free, <span class="ever" style="font-size:.75rem;">ever</span>.</div>
+</footer>
+
+<script>
+  (function () {
+    /* Dynamic dates */
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit', hour12: true
+    });
+    const label = fmt.format(new Date());
+    document.querySelectorAll('.dynamic-date').forEach(function (el) {
+      el.textContent = label;
+    });
+
+    /* Fade-in on scroll */
+    var fadeEls = document.querySelectorAll('.fade-in');
+    var fadeObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          fadeObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    fadeEls.forEach(function (el) { fadeObs.observe(el); });
+
+    /* Carousel indicators — scroll-position based */
+    var grid = document.querySelector('.screens-grid');
+    var dots = document.querySelectorAll('.scroll-dot');
+    var frames = grid.querySelectorAll('.frame-wrapper');
+
+    function updateActiveDot() {
+      var gridCenter = grid.scrollLeft + grid.offsetWidth / 2;
+      var closest = 0;
+      var closestDist = Infinity;
+      frames.forEach(function (f, i) {
+        var center = f.offsetLeft + f.offsetWidth / 2;
+        var dist = Math.abs(gridCenter - center);
+        if (dist < closestDist) { closestDist = dist; closest = i; }
+      });
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === closest); });
+    }
+
+    var scrollTimer;
+    grid.addEventListener('scroll', function () {
+      cancelAnimationFrame(scrollTimer);
+      scrollTimer = requestAnimationFrame(updateActiveDot);
+    });
+    /* Start with macOS (index 1) centered */
+    frames[1].scrollIntoView({ block: 'nearest', inline: 'center' });
+    updateActiveDot();
+
+    dots.forEach(function (dot) {
+      dot.addEventListener('click', function () {
+        var i = parseInt(dot.getAttribute('data-index'), 10);
+        frames[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      });
+    });
+  })();
+</script>
+</body>
+</html>

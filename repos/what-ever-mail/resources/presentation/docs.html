@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatEver Mail — Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent:      #f97316;
+      --accent2:     #fbbf24;
+      --grad:        linear-gradient(135deg, #f97316, #fbbf24);
+      --accent-soft: rgba(249,115,22,0.1);
+      --bg:          #ffffff;
+      --bg-soft:     #f8f8fb;
+      --bg-panel:    #f0f0f6;
+      --t1:          #1a1a2e;
+      --t2:          #4a4a6a;
+      --t3:          #9090b0;
+      --border:      rgba(0,0,0,0.08);
+      --sidebar-w:   260px;
+
+      /* App mock tokens — follow page theme */
+      --app-base:    #ffffff;
+      --app-panel:   #f8f8fb;
+      --app-hover:   rgba(0,0,0,0.03);
+      --app-t1:      #1a1a2e;
+      --app-t2:      #4a4a6a;
+      --app-t3:      #9090b0;
+      --app-border:  rgba(0,0,0,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--t1);
+      line-height: 1.65;
+    }
+
+    /* ─── TOP NAV ─── */
+    .top-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 56px; display: flex; align-items: center;
+      padding: 0 32px; gap: 32px;
+    }
+    .nav-logo { font-weight: 700; font-size: 0.95rem; color: var(--t1); text-decoration: none; }
+    .nav-logo .lo-ever { color: var(--accent); }
+    .top-nav-links { display: flex; gap: 24px; margin-left: 16px; }
+    .top-nav-links a { font-size: 0.82rem; color: var(--t2); text-decoration: none; transition: color .15s; }
+    .top-nav-links a:hover { color: var(--t1); }
+    .nav-spacer { flex: 1; }
+    .nav-badge {
+      font-size: 0.7rem; padding: 2px 10px; border-radius: 100px;
+      background: var(--accent-soft); color: var(--accent); font-weight: 600;
+    }
+
+    /* ─── LAYOUT ─── */
+    .doc-layout { display: flex; max-width: 1280px; margin: 0 auto; min-height: calc(100vh - 56px); }
+
+    /* ─── SIDEBAR NAV ─── */
+    .doc-sidebar {
+      width: var(--sidebar-w); min-width: var(--sidebar-w);
+      padding: 32px 0; position: sticky; top: 56px; align-self: flex-start;
+      height: calc(100vh - 56px); overflow-y: auto;
+      border-right: 1px solid var(--border);
+    }
+    .sidebar-section { padding: 0 20px 24px; }
+    .sidebar-section-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--t3); margin-bottom: 8px;
+    }
+    .sidebar-link {
+      display: block; padding: 5px 10px; border-radius: 6px;
+      font-size: 0.82rem; color: var(--t2); text-decoration: none;
+      transition: background .12s, color .12s; margin-bottom: 1px;
+    }
+    .sidebar-link:hover { background: var(--bg-panel); color: var(--t1); }
+    .sidebar-link.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    /* ─── MAIN CONTENT ─── */
+    .doc-main { flex: 1; padding: 48px 56px; max-width: 860px; }
+    .doc-section { margin-bottom: 80px; scroll-margin-top: 80px; }
+    .doc-section:last-child { margin-bottom: 40px; }
+
+    h2.section-title {
+      font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em;
+      color: var(--t1); margin-bottom: 12px; line-height: 1.2;
+    }
+    .section-intro { font-size: 0.95rem; color: var(--t2); line-height: 1.7; margin-bottom: 32px; }
+
+    .ever { color: var(--accent); font-weight: 600; }
+
+    /* ─── OVERVIEW HERO ─── */
+    .overview-hero {
+      background: linear-gradient(135deg, #0d0d11 0%, #1a1a2e 100%);
+      border-radius: 16px; padding: 40px; margin-bottom: 36px;
+      border: 1px solid rgba(249,115,22,0.2);
+      position: relative; overflow: hidden;
+    }
+    .overview-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+    }
+    .overview-hero h3 { font-size: 1.4rem; font-weight: 800; color: #eeeef4; margin-bottom: 10px; }
+    .overview-hero p  { font-size: 0.9rem; color: #8888a8; line-height: 1.7; max-width: 560px; }
+    .overview-hero .accent { color: var(--accent); font-weight: 600; }
+    .overview-tags { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .overview-tag {
+      padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 500;
+      background: rgba(249,115,22,0.12); color: var(--accent);
+      border: 1px solid rgba(249,115,22,0.2);
+    }
+
+    /* ─── USE CASE CARDS ─── */
+    .use-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .use-case {
+      padding: 20px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg-soft);
+    }
+    .use-case-icon { font-size: 1.4rem; margin-bottom: 10px; }
+    .use-case h4 { font-size: 0.88rem; font-weight: 700; color: var(--t1); margin-bottom: 5px; }
+    .use-case p  { font-size: 0.78rem; color: var(--t2); line-height: 1.5; }
+
+    /* ─── STEPS ─── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid; grid-template-columns: 48px 1fr; gap: 0 20px;
+      padding-bottom: 32px; position: relative;
+    }
+    .step:last-child { padding-bottom: 0; }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--grad); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+      position: relative; z-index: 1;
+    }
+    .step-line {
+      position: absolute; left: 18px; top: 36px; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, rgba(249,115,22,0.3), transparent);
+    }
+    .step:last-child .step-line { display: none; }
+    .step-content { padding-top: 6px; }
+    .step-content h4 { font-size: 1rem; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .step-content p  { font-size: 0.85rem; color: var(--t2); line-height: 1.6; margin-bottom: 12px; }
+
+    /* ─── CODE BLOCK ─── */
+    .code-block {
+      background: #0d0d11; border-radius: 10px; padding: 18px 20px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      line-height: 1.7; overflow-x: auto; margin: 12px 0;
+      border: 1px solid rgba(255,255,255,0.07);
+      white-space: pre; color: #eeeef4; tab-size: 2;
+    }
+    .code-block .kw  { color: #c792ea; }
+    .code-block .str { color: #c3e88d; }
+    .code-block .num { color: #f78c6c; }
+    .code-block .cmt { color: #546e7a; font-style: italic; }
+    .code-block .fn  { color: #82aaff; }
+    .code-block .obj { color: #ffcb6b; }
+    .code-block .prop { color: #8888a8; }
+    .code-block .lit { color: #eeeef4; }
+
+    /* inline code */
+    code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.82em;
+      background: rgba(249,115,22,0.08); color: var(--accent);
+      padding: 1px 6px; border-radius: 4px;
+    }
+
+    /* ─── PLATFORM CARDS ─── */
+    .platform-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .platform-card {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 1px solid var(--border); border-radius: 12px; padding: 28px 20px;
+      text-align: center; background: var(--bg-soft);
+      text-decoration: none; color: inherit;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      cursor: pointer;
+    }
+    .platform-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(249,115,22,0.15);
+      border-color: var(--accent);
+    }
+    .platform-card .pc-icon { font-size: 2rem; margin-bottom: 10px; }
+    .platform-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+    .platform-card .pc-label {
+      font-size: 0.78rem; color: var(--accent); font-weight: 600;
+      opacity: 0; transform: translateY(4px);
+      transition: opacity .2s, transform .2s;
+    }
+    .platform-card:hover .pc-label { opacity: 1; transform: translateY(0); }
+
+    /* ─── FEATURE SECTIONS ─── */
+    .feature-section {
+      display: grid; grid-template-columns: 1fr 300px; gap: 40px;
+      align-items: start; margin-bottom: 60px; padding-bottom: 60px;
+      border-bottom: 1px solid var(--border);
+    }
+    .feature-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .feature-section.reverse { grid-template-columns: 300px 1fr; }
+    .feature-section.reverse .fs-visual { order: -1; }
+
+    .fs-text h3 { font-size: 1.1rem; font-weight: 700; color: var(--t1); margin-bottom: 8px; }
+    .fs-text p  { font-size: 0.87rem; color: var(--t2); line-height: 1.7; margin-bottom: 14px; }
+    .fs-text ul { padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .fs-text li { font-size: 0.84rem; color: var(--t2); display: flex; gap: 8px; align-items: baseline; }
+    .fs-text li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+    /* ─── MINI APP MOCKUP (used in feature sections) ─── */
+    .mini-mock {
+      background: var(--app-panel); border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px var(--app-border);
+    }
+    @media (prefers-color-scheme: dark) {
+      .mini-mock { box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.07); }
+    }
+    .mini-titlebar {
+      height: 36px; background: var(--app-panel);
+      border-bottom: 1px solid var(--accent);
+      display: flex; align-items: center; padding: 0 12px; gap: 6px;
+    }
+    .mtl { width: 9px; height: 9px; border-radius: 50%; }
+    .mtl-r { background: #ff5f57; }
+    .mtl-y { background: #febc2e; }
+    .mtl-g { background: #28c840; }
+    .mini-titlebar .mwm {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      font-size: 0.65rem; font-weight: 700; color: var(--app-t2);
+      white-space: nowrap;
+    }
+    .mini-titlebar .mwm .mwm-ever { color: var(--accent); }
+    .mini-titlebar .msmtp {
+      margin-left: auto; font-size: 0.6rem; font-family: 'IBM Plex Mono', monospace;
+      color: var(--app-t2); border: 1px solid #10b981; border-radius: 100px;
+      padding: 2px 7px; display: flex; align-items: center; gap: 4px;
+    }
+    .msmtp-dot { width: 5px; height: 5px; border-radius: 50%; background: #10b981; }
+
+    /* mini preview-only mock */
+    .mini-preview {
+      display: flex; flex-direction: column;
+    }
+    .mini-preview-header { padding: 10px 12px 0; border-bottom: 1px solid var(--app-border); }
+    .mini-preview-subject { font-size: 0.7rem; font-weight: 600; color: var(--app-t1); margin-bottom: 6px; }
+    .mini-preview-meta { font-size: 0.6rem; color: var(--app-t2); margin-bottom: 6px; }
+    .mini-tabs { display: flex; gap: 2px; }
+    .mtab {
+      font-size: 0.6rem; padding: 4px 8px; border: none; border-bottom: 2px solid transparent;
+      background: transparent; color: var(--app-t3); font-family: 'Poppins', sans-serif; cursor: pointer;
+    }
+    .mtab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .mini-preview-body { padding: 10px 12px; background: var(--app-base); flex: 1; }
+
+    /* mini email content */
+    .mini-email {
+      background: #fff; border-radius: 7px; overflow: hidden; font-family: 'Poppins', sans-serif;
+    }
+    .mini-ec-hero { background: linear-gradient(135deg,#f97316,#fbbf24); padding: 14px; text-align: center; }
+    .mini-ec-hero h4 { color: #fff; font-size: 0.65rem; font-weight: 700; margin-bottom: 2px; }
+    .mini-ec-hero p  { color: rgba(255,255,255,.85); font-size: 0.55rem; }
+    .mini-ec-body { padding: 10px 12px; }
+    .mini-ec-body p { font-size: 0.6rem; color: #1a1a2e; line-height: 1.5; margin-bottom: 8px; }
+    .mini-ec-body strong { color: #f97316; }
+    .mini-ec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .mini-ec-card { padding: 7px 8px; border-radius: 5px; border-left: 2px solid; }
+    .mini-ec-card.em { background:#fff7ed; border-color:#f97316; }
+    .mini-ec-card.ja { background:#f0fdf4; border-color:#10b981; }
+    .mini-ec-card.az { background:#eff6ff; border-color:#3b82f6; }
+    .mini-ec-card.pu { background:#fdf4ff; border-color:#a855f7; }
+    .mini-ec-card span { font-size: 0.58rem; color: #1a1a2e; font-weight: 700; display: block; }
+    .mini-ec-card small { font-size: 0.52rem; color: #5a5a7a; }
+
+    /* mini list mock */
+    .mini-list-mock { background: var(--app-panel); }
+    .mini-list-search {
+      padding: 8px 10px 6px; border-bottom: 1px solid var(--app-border);
+    }
+    .mini-list-search-inner {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--app-hover); border: 1px solid var(--app-border);
+      border-radius: 6px; padding: 4px 8px; color: var(--app-t3);
+    }
+    .mini-list-search-inner span { font-size: 0.62rem; color: var(--app-t3); }
+    .mini-email-row {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 8px 10px; border-left: 3px solid transparent;
+      border-bottom: 1px solid rgba(255,255,255,.03);
+    }
+    .mini-email-row.sel { background: rgba(249,115,22,.08); border-left-color: var(--accent); }
+    .mini-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .mini-row-body { flex: 1; min-width: 0; }
+    .mini-row-sender { font-size: 0.62rem; color: var(--app-t1); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-row-subject { font-size: 0.6rem; color: var(--app-t2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+    .mini-row-preview { font-size: 0.55rem; color: var(--app-t3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+    .mini-unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 4px; }
+
+    /* theme swatch row */
+    .theme-swatches { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+    .theme-swatch {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+      font-size: 0.78rem; font-weight: 500; background: var(--bg-soft);
+    }
+    .swatch-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ─── SIDEBAR MINI MOCK ─── */
+    .mini-sidebar-mock {
+      background: var(--app-base); border-radius: 8px; overflow: hidden; padding: 8px;
+      border: 1px solid var(--app-border);
+    }
+    .mini-nav-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 8px; border-radius: 6px; margin-bottom: 2px;
+      font-size: 0.62rem; font-family: 'Poppins', sans-serif;
+    }
+    .mini-nav-btn.active { background: rgba(249,115,22,.14); color: var(--accent); font-weight: 600; }
+    .mini-nav-btn.inactive { color: var(--app-t2); }
+    .mini-badge { background: var(--grad); color: #fff; border-radius: 8px; padding: 0 5px; font-size: 0.55rem; font-weight: 700; margin-left: auto; }
+
+    /* ─── HEADERS MOCK ─── */
+    .mini-headers-table { width: 100%; }
+    .mini-headers-table tr td { padding: 3px 6px; font-size: 0.6rem; font-family: 'IBM Plex Mono', monospace; }
+    .mini-headers-table tr td:first-child { color: var(--accent); font-weight: 500; white-space: nowrap; }
+    .mini-headers-table tr td:last-child { color: var(--app-t2); word-break: break-all; }
+    .mini-headers-table tr { border-bottom: 1px solid var(--app-border); }
+
+    /* ─── FAQ ─── */
+    .faq-list { display: flex; flex-direction: column; gap: 0; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item input[type=checkbox] { display: none; }
+    .faq-label {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 0; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: var(--t1);
+      gap: 12px; user-select: none;
+    }
+    .faq-arrow { color: var(--t3); font-size: 1rem; transition: transform .2s; flex-shrink: 0; }
+    .faq-body { display: none; padding-bottom: 18px; font-size: 0.87rem; color: var(--t2); line-height: 1.7; }
+    .faq-item input:checked ~ .faq-label .faq-arrow { transform: rotate(180deg); color: var(--accent); }
+    .faq-item input:checked ~ .faq-body { display: block; }
+
+    /* ─── FOOTER ─── */
+    .doc-footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      color: var(--t3); font-size: 0.8rem;
+    }
+    .doc-footer .logo { font-weight: 700; font-size: 0.9rem; color: var(--t2); }
+    .doc-footer .logo .le { color: var(--accent); }
+    .doc-footer a { color: var(--t3); text-decoration: none; }
+    .doc-footer a:hover { color: var(--t2); }
+
+
+    /* ─── DARK MODE ─── */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          #0d0d11;
+        --bg-soft:     #141418;
+        --bg-panel:    #1a1a22;
+        --t1:          #eeeef4;
+        --t2:          #8888a8;
+        --t3:          #55556a;
+        --border:      rgba(255,255,255,0.07);
+
+        /* App mock tokens — dark */
+        --app-base:    #0d0d11;
+        --app-panel:   #141418;
+        --app-hover:   rgba(255,255,255,0.04);
+        --app-t1:      #eeeef4;
+        --app-t2:      #8888a8;
+        --app-t3:      #55556a;
+        --app-border:  rgba(255,255,255,0.07);
+      }
+      .top-nav { background: rgba(13,13,17,0.92); }
+      code { background: rgba(249,115,22,0.15); }
+      .overview-hero { border-color: rgba(249,115,22,0.3); }
+      .mini-ec-hero h4 { color: #fff; }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .doc-sidebar { display: none; }
+      .doc-main { padding: 32px 24px; max-width: 100%; }
+      .feature-section { grid-template-columns: 1fr; gap: 24px; }
+      .feature-section.reverse { grid-template-columns: 1fr; }
+      .feature-section .fs-visual { order: 1; }
+      .feature-section .fs-text { order: 0; }
+      .platform-cards { grid-template-columns: repeat(3, 1fr); }
+      .use-cases { grid-template-columns: repeat(3, 1fr); }
+      .doc-footer { padding: 24px; flex-wrap: wrap; gap: 12px; justify-content: center; text-align: center; }
+    }
+
+    @media (max-width: 640px) {
+      .top-nav { padding: 0 16px; gap: 16px; }
+      .top-nav-links { display: none; }
+      .doc-main { padding: 24px 16px; }
+      h2.section-title { font-size: 1.4rem; }
+      .platform-cards { grid-template-columns: 1fr; }
+      .use-cases { grid-template-columns: 1fr; }
+      .overview-hero { padding: 24px; }
+      .overview-hero h3 { font-size: 1.1rem; }
+      .theme-swatches { gap: 6px; }
+      .theme-swatch { padding: 6px 10px; font-size: 0.72rem; }
+      .faq-label { font-size: 0.82rem; }
+      .doc-footer { flex-direction: column; }
+    }
+    /* ─── CODE TABS ─── */
+    .code-tabs { display: flex; gap: 2px; margin-top: 12px; }
+    .code-tab {
+      padding: 6px 16px; border: none; border-radius: 8px 8px 0 0; cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 500;
+      background: rgba(13,13,17,0.5); color: #546e7a; transition: all .15s;
+    }
+    .code-tab.active { background: #0d0d11; color: #eeeef4; }
+    .code-tab-panels { position: relative; }
+    .code-tab-panels .code-block { margin-top: 0; border-radius: 0 10px 10px 10px; }
+    .code-tab-panel { display: none; }
+    .code-tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ─── TOP NAV ─── -->
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo">What<span class="lo-ever">Ever</span> Mail</a>
+  <div class="top-nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#install">Install</a>
+    <a href="#quickstart">Quick Start</a>
+    <a href="#features">Features</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <div class="nav-spacer"></div>
+  <span class="nav-badge">v0.2</span>
+</nav>
+
+<div class="doc-layout">
+
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="doc-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Getting Started</div>
+      <a href="#overview" class="sidebar-link active">Overview</a>
+      <a href="#install" class="sidebar-link">Installation</a>
+      <a href="#quickstart" class="sidebar-link">Quick Start</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Features</div>
+      <a href="#feat-preview" class="sidebar-link">HTML Preview</a>
+      <a href="#feat-views" class="sidebar-link">All Views</a>
+      <a href="#feat-search" class="sidebar-link">Search</a>
+      <a href="#feat-delete" class="sidebar-link">Delete &amp; Trash</a>
+      <a href="#feat-themes" class="sidebar-link">Themes</a>
+      <a href="#feat-smtp" class="sidebar-link">SMTP Status</a>
+      <a href="#feat-tray" class="sidebar-link">System Tray</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Reference</div>
+      <a href="#faq" class="sidebar-link">FAQ</a>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN CONTENT ─── -->
+  <main class="doc-main">
+
+    <!-- ══ OVERVIEW ══ -->
+    <section id="overview" class="doc-section">
+      <h2 class="section-title">What<span class="ever">Ever</span> Mail</h2>
+      <p class="section-intro">
+        A local SMTP email capture tool built for developers. <span class="ever">Ever</span> wished you could test your app's email
+        flow without signing up for a service, worrying about rate limits, or sending real emails?
+        WhatEver Mail runs on your machine — capturing <span class="ever">every</span> email locally, the moment it's sent.
+      </p>
+
+      <div class="overview-hero">
+        <h3>Your local inbox. <span class="accent">Ever</span> ready.</h3>
+        <p>
+          Point any SMTP-capable app at <code style="background:rgba(249,115,22,.15);color:#fbbf24;">localhost:1025</code> and
+          watch your emails appear instantly. No accounts. No cloud. No rate limits.
+          <span class="accent">Ever</span>-present, <span class="accent">ever</span>-reliable, 100% offline.
+        </p>
+        <div class="overview-tags">
+          <span class="overview-tag">macOS</span>
+          <span class="overview-tag">Windows</span>
+          <span class="overview-tag">Linux</span>
+          <span class="overview-tag">100% Offline</span>
+          <span class="overview-tag">Free</span>
+        </div>
+      </div>
+
+      <div class="use-cases">
+        <div class="use-case">
+          <div class="use-case-icon">🧪</div>
+          <h4>Test email flows</h4>
+          <p>Send password resets, notifications, or receipts — catch them all without leaving your machine.</p>
+        </div>
+        <div class="use-case">
+          <div class="use-case-icon">🔍</div>
+          <h4>Debug templates</h4>
+          <p>Inspect HTML rendering, check headers, and view raw source side by side.</p>
+        </div>
+        <div class="use-case">
+          <div class="use-case-icon">🚀</div>
+          <h4>Ship with confidence</h4>
+          <p>Verify <span class="ever">every</span> email looks right before it reaches a real inbox.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ INSTALL ══ -->
+    <section id="install" class="doc-section">
+      <h2 class="section-title">Installation</h2>
+      <p class="section-intro">
+        Download the build for your platform and run it. No installer configuration required —
+        WhatEver Mail is <span class="ever">ever</span>-ready out of the box.
+      </p>
+
+      <div class="platform-cards">
+        <a href="#" class="platform-card">
+          <div class="pc-icon">🍎</div>
+          <h4>macOS</h4>
+          <span class="pc-label">Download</span>
+        </a>
+        <a href="#" class="platform-card">
+          <div class="pc-icon">🪟</div>
+          <h4>Windows</h4>
+          <span class="pc-label">Download</span>
+        </a>
+        <a href="#" class="platform-card">
+          <div class="pc-icon">🐧</div>
+          <h4>Linux</h4>
+          <span class="pc-label">Download</span>
+        </a>
+      </div>
+
+      <p style="margin-top:20px;font-size:.82rem;color:var(--t3);">
+        <strong>macOS note:</strong> On first launch, right-click → Open if Gatekeeper blocks it (unsigned build).
+        <br>
+        <strong>Linux note:</strong> <code>chmod +x WhatEverMail.AppImage</code> then run it.
+      </p>
+    </section>
+
+    <!-- ══ QUICK START ══ -->
+    <section id="quickstart" class="doc-section">
+      <h2 class="section-title">Quick Start</h2>
+      <p class="section-intro">
+        From download to catching your first email in under two minutes.
+        Three steps — that's <span class="ever">ever</span>ything you need.
+      </p>
+
+      <div class="steps">
+        <!-- Step 1 -->
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+          <div class="step-content">
+            <h4>Launch WhatEver Mail</h4>
+            <p>
+              Open the app. The SMTP server starts automatically on <code>localhost:1025</code>.
+              You'll see the green <strong style="color:#10b981;">SMTP :1025 listening</strong> indicator in the title bar and status bar.
+            </p>
+            <div class="mini-mock" style="max-width:460px;">
+              <div class="mini-titlebar" style="position:relative;">
+                <div class="mtl mtl-r"></div><div class="mtl mtl-y"></div><div class="mtl mtl-g"></div>
+                <span class="mwm">What<span class="mwm-ever">Ever</span> Mail</span>
+                <div class="msmtp"><div class="msmtp-dot"></div>SMTP :1025</div>
+              </div>
+              <div style="padding:12px 14px;background:var(--app-base);display:flex;align-items:center;gap:10px;">
+                <div style="display:flex;align-items:center;gap:5px;font-size:.65rem;font-family:'IBM Plex Mono',monospace;color:var(--app-t3);">
+                  <div style="width:6px;height:6px;border-radius:50%;background:#10b981;"></div>
+                  SMTP :1025 listening
+                </div>
+                <div style="font-size:.65rem;color:var(--app-t3);font-family:'IBM Plex Mono',monospace;">0 emails</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+          <div class="step-content">
+            <h4>Point your app at localhost:1025</h4>
+            <p>
+              Point any SMTP client at <code>localhost:1025</code> — no authentication, no TLS.
+              Test with a quick <code>curl</code> or wire up your app's mailer. Works with <span class="ever">every</span> SMTP client.
+            </p>
+            <div class="code-tabs">
+              <button class="code-tab active" data-panel="curl">curl</button>
+              <button class="code-tab" data-panel="nodemailer">Nodemailer</button>
+            </div>
+            <div class="code-tab-panels">
+              <div class="code-tab-panel active" id="panel-curl">
+                <pre class="code-block"><span class="cmt"># Send a test email in one line</span>
+<span class="obj">curl</span> <span class="str">--url</span> <span class="str">'smtp://localhost:1025'</span> \
+  <span class="str">--mail-from</span> <span class="str">'app@yourproject.dev'</span> \
+  <span class="str">--mail-rcpt</span> <span class="str">'user@example.com'</span> \
+  <span class="str">-T</span> - <span class="lit">&lt;&lt;</span><span class="kw">EOF</span>
+<span class="prop">From</span>: app@yourproject.dev
+<span class="prop">To</span>: user@example.com
+<span class="prop">Subject</span>: Welcome! Ever glad you joined.
+<span class="prop">Content-Type</span>: text/plain
+
+Hello from WhatEver Mail!
+<span class="kw">EOF</span></pre>
+              </div>
+              <div class="code-tab-panel" id="panel-nodemailer">
+                <pre class="code-block"><span class="kw">const</span> <span class="obj">transporter</span> = nodemailer.<span class="fn">createTransport</span>({
+  <span class="prop">host</span>:       <span class="str">'localhost'</span>,
+  <span class="prop">port</span>:       <span class="num">1025</span>,
+  <span class="prop">secure</span>:     <span class="kw">false</span>,
+  <span class="prop">ignoreTLS</span>: <span class="kw">true</span>,
+});
+
+<span class="cmt">// Send as normal — WhatEver Mail catches it</span>
+<span class="kw">await</span> transporter.<span class="fn">sendMail</span>({
+  <span class="prop">from</span>:    <span class="str">'app@yourproject.dev'</span>,
+  <span class="prop">to</span>:      <span class="str">'user@example.com'</span>,
+  <span class="prop">subject</span>: <span class="str">'Welcome! Ever glad you joined.'</span>,
+  <span class="prop">html</span>:    welcomeHtml,
+});</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Send a test email — watch it appear</h4>
+            <p>
+              Trigger any action in your app that sends email. The message appears in WhatEver Mail within milliseconds.
+              Click it to open the preview — HTML rendered, headers parsed, source available. <span class="ever">Every</span> detail, instantly.
+            </p>
+            <div class="mini-mock" style="max-width:460px;">
+              <div class="mini-titlebar" style="position:relative;">
+                <div class="mtl mtl-r"></div><div class="mtl mtl-y"></div><div class="mtl mtl-g"></div>
+                <span class="mwm">What <span class="mwm-ever">Ever</span> Mail</span>
+                <div class="msmtp"><div class="msmtp-dot"></div>SMTP :1025</div>
+              </div>
+              <div style="display:flex;height:120px;">
+                <div style="width:120px;background:var(--app-base);border-right:1px solid var(--app-border);padding:6px 5px;flex-shrink:0;">
+                  <div class="mini-nav-btn active">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                    Inbox <span style="margin-left: auto; color: var(--app-t1)">1</span>
+                  </div>
+                </div>
+                <div style="flex:1;background:var(--app-panel);overflow:hidden;">
+                  <div class="mini-email-row sel">
+                    <div class="mini-avatar" style="background:var(--grad);">AP</div>
+                    <div class="mini-row-body">
+                      <div class="mini-row-sender">app@yourproject.dev</div>
+                      <div class="mini-row-subject">Welcome! Ever glad you joined.</div>
+                      <div class="mini-row-preview">Thanks for signing up…</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="height:22px;background:var(--app-base);border-top:1px solid var(--app-border);display:flex;align-items:center;gap:12px;padding:0 12px;">
+                <div style="font-size:.6rem;color:var(--app-t3);font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:4px;">
+                  <div style="width:5px;height:5px;border-radius:50%;background:#10b981;"></div>SMTP :1025 listening
+                </div>
+                <div style="font-size:.6rem;color:var(--app-t3);font-family:'IBM Plex Mono',monospace;">1 email</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ FEATURES ══ -->
+    <section id="features" class="doc-section">
+      <h2 class="section-title">Features</h2>
+
+      <!-- HTML Preview -->
+      <div id="feat-preview" class="feature-section">
+        <div class="fs-text">
+          <h3>HTML Email Preview</h3>
+          <p>
+            WhatEver Mail renders HTML emails in a sandboxed iframe — exactly how a real email client would show them.
+            <span class="ever">Every</span> style, <span class="ever">every</span> image reference, <span class="ever">every</span> layout element.
+          </p>
+          <ul>
+            <li>DOMPurify sanitisation removes malicious scripts before rendering</li>
+            <li>All external network requests are blocked — no tracking pixels load</li>
+            <li>Renders in full isolation so nothing escapes into the browser page</li>
+            <li>Automatically falls back to Text tab if no HTML part is present</li>
+          </ul>
+        </div>
+        <div class="fs-visual">
+          <div class="mini-mock" style="max-width:460px;">
+            <div class="mini-preview">
+              <div class="mini-preview-header">
+                <div class="mini-preview-subject">Everything you've ever dreamed…</div>
+                <div class="mini-preview-meta">From: hello@everideas.co</div>
+                <div class="mini-tabs">
+                  <button class="mtab active">HTML</button>
+                  <button class="mtab">Text</button>
+                  <button class="mtab">Source</button>
+                  <button class="mtab">Headers</button>
+                </div>
+              </div>
+              <div class="mini-preview-body">
+                <div class="mini-email">
+                  <div class="mini-ec-hero">
+                    <h4>What<strong>ever</strong> you imagine —</h4>
+                    <p>you can build it. You can send it.</p>
+                  </div>
+                  <div class="mini-ec-body">
+                    <p><strong>Ever</strong> notice how the best ideas start with a single message? Just pure, <strong>ever-present</strong> possibility.</p>
+                    <div class="mini-ec-grid">
+                      <div class="mini-ec-card em"><span>🌱 Ever growing</span><small>Every idea deserves to bloom.</small></div>
+                      <div class="mini-ec-card ja"><span>✨ Ever forward</span><small>Progress, one send at a time.</small></div>
+                      <div class="mini-ec-card az"><span>🚀 Ever ready</span><small>Your stack, zero friction.</small></div>
+                      <div class="mini-ec-card pu"><span>💌 Ever sent</span><small>Catch every email. Miss nothing.</small></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All Views -->
+      <div id="feat-views" class="feature-section reverse">
+        <div class="fs-visual">
+          <div class="mini-mock" style="max-width:460px;">
+            <div class="mini-preview">
+              <div class="mini-preview-header">
+                <div class="mini-preview-subject">Quick note — ever tried local SMTP?</div>
+                <div class="mini-tabs">
+                  <button class="mtab">HTML</button>
+                  <button class="mtab active">Text</button>
+                  <button class="mtab">Source</button>
+                  <button class="mtab">Headers</button>
+                </div>
+              </div>
+              <div class="mini-preview-body">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--app-t2);line-height:1.8;white-space:pre-wrap;">From: alice@team.dev
+To: dev@yourapp.local
+
+Have you <span style="color:#f97316;font-weight:500;">ever</span> tried running
+your email flow locally? No
+account needed, no rate limits.
+
+Point your app at localhost:1025
+and <span style="color:#f97316;font-weight:500;">every</span> email lands right here.
+<span style="color:#f97316;font-weight:500;">Ever</span>-reliable, <span style="color:#f97316;font-weight:500;">ever</span>-local.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fs-text">
+          <h3>Four views for every email</h3>
+          <p>Switch between four tabs with a single click — each gives you a different perspective on the same message.</p>
+          <ul>
+            <li><strong>HTML</strong> — Rendered preview in sandboxed iframe</li>
+            <li><strong>Text</strong> — Plain text in IBM Plex Mono, with line wrapping</li>
+            <li><strong>Source</strong> — Raw MIME source, complete and unmodified</li>
+            <li><strong>Headers</strong> — Parsed key/value table, keys highlighted in accent colour</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div id="feat-search" class="feature-section">
+        <div class="fs-text">
+          <h3>Instant search</h3>
+          <p>
+            Search your inbox in real time. <span class="ever">Every</span> keystroke filters across sender, recipient, and subject simultaneously.
+          </p>
+          <ul>
+            <li>Searches From, To, and Subject fields</li>
+            <li>Instant filtering — no delay, no button to press</li>
+            <li>Clear button resets search with one click</li>
+            <li>Works in both Inbox and Trash views</li>
+          </ul>
+        </div>
+        <div class="fs-visual">
+          <div class="mini-mock" style="max-width:460px;">
+            <div class="mini-list-mock">
+              <div class="mini-list-search">
+                <div class="mini-list-search-inner">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <span style="color:var(--app-t1);font-family:'IBM Plex Mono',monospace;">ever</span>
+                  <span style="margin-left:auto;cursor:pointer;color:var(--app-t3);">×</span>
+                </div>
+              </div>
+              <div class="mini-email-row sel">
+                <div class="mini-avatar" style="background:var(--grad);">HE</div>
+                <div class="mini-row-body">
+                  <div class="mini-row-sender">hello@everideas.co</div>
+                  <div class="mini-row-subject">Everything you've <span style="color:var(--accent);font-weight:700;">ever</span> dreamed…</div>
+                </div>
+              </div>
+              <div class="mini-email-row">
+                <div class="mini-avatar" style="background:hsl(142,65%,42%);">AL</div>
+                <div class="mini-row-body">
+                  <div class="mini-row-sender">alice@team.dev</div>
+                  <div class="mini-row-subject"><span style="color:var(--accent);font-weight:700;">Ever</span> tried local SMTP?</div>
+                </div>
+                <div class="mini-unread-dot"></div>
+              </div>
+              <div class="mini-email-row">
+                <div class="mini-avatar" style="background:hsl(210,65%,48%);">NO</div>
+                <div class="mini-row-body">
+                  <div class="mini-row-sender">noreply@evermore.io</div>
+                  <div class="mini-row-subject">Your <span style="color:var(--accent);font-weight:700;">ever</span>-present opportunity</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete & Trash -->
+      <div id="feat-delete" class="feature-section reverse">
+        <div class="fs-visual">
+          <div class="mini-mock" style="max-width:460px;">
+            <div style="display:flex;height:150px;">
+              <div style="width:110px;background:var(--app-base);border-right:1px solid var(--app-border);padding:6px 5px;flex-shrink:0;">
+                <div class="mini-nav-btn inactive">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                  Inbox
+                </div>
+                <div class="mini-nav-btn active">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                  Trash <span style="margin-left:auto; color: var(--app-t1)">2</span>
+                </div>
+              </div>
+              <div style="flex:1;background:var(--app-panel);overflow:hidden;">
+                <div style="padding:4px 8px;border-bottom:1px solid var(--app-border);font-size:.55rem;color:var(--app-t3);font-family:'IBM Plex Mono',monospace;">
+                  Emails older than 15 days are auto-deleted
+                </div>
+                <div class="mini-email-row sel">
+                  <div class="mini-avatar" style="background:hsl(210,65%,48%);">NO</div>
+                  <div class="mini-row-body">
+                    <div class="mini-row-sender">noreply@evermore.io</div>
+                    <div class="mini-row-subject">Your ever-present opportunity</div>
+                  </div>
+                </div>
+                <div class="mini-email-row">
+                  <div class="mini-avatar" style="background:hsl(270,65%,52%);">BU</div>
+                  <div class="mini-row-body">
+                    <div class="mini-row-sender">build@everdeploy.sh</div>
+                    <div class="mini-row-subject">Deploy success — ever reliable</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fs-text">
+          <h3>Delete &amp; Trash</h3>
+          <p>
+            Emails move to Trash when deleted — they're not gone immediately.
+            Trash is cleared automatically after 15 days, or you can empty it manually.
+          </p>
+          <ul>
+            <li>Click the trash icon in the preview header to delete an email</li>
+            <li><code>Delete</code> key (or <code>⌘+Backspace</code> on macOS) deletes the selected email</li>
+            <li>Multi-select with <code>⌘/Ctrl+Click</code> or <code>Shift+Click</code></li>
+            <li>Restore emails from Trash back to Inbox any time</li>
+            <li>Trash view shows emails older than 15 days will auto-delete</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Themes -->
+      <div id="feat-themes" class="feature-section">
+        <div class="fs-text">
+          <h3>5 accent themes</h3>
+          <p>
+            Switch the app's accent colour instantly from the Theme picker in the sidebar.
+            Your preference is saved and persists across restarts.
+          </p>
+          <div class="theme-swatches">
+            <div class="theme-swatch"><div class="swatch-dot" style="background:#f97316;"></div> Ember</div>
+            <div class="theme-swatch"><div class="swatch-dot" style="background:#6366f1;"></div> Midnight</div>
+            <div class="theme-swatch"><div class="swatch-dot" style="background:#10b981;"></div> Jade</div>
+            <div class="theme-swatch"><div class="swatch-dot" style="background:#f43f5e;"></div> Rose</div>
+            <div class="theme-swatch"><div class="swatch-dot" style="background:#0ea5e9;"></div> Azure</div>
+          </div>
+          <ul>
+            <li>Affects: selected rows, tab underline, badges, SMTP pill border</li>
+            <li>Surfaces (backgrounds) follow OS light/dark mode — themes only change the accent</li>
+            <li>Click any dot in the sidebar to switch; takes effect instantly</li>
+          </ul>
+        </div>
+        <div class="fs-visual">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <!-- Ember -->
+            <div class="mini-mock" style="--accent:#f97316;--accent-soft:rgba(249,115,22,0.14); max-width:460px;">
+              <div style="height:28px;background:var(--app-panel);border-bottom:1px solid #f97316;display:flex;align-items:center;padding:0 10px;gap:5px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#ff5f57;"></div>
+                <div style="width:8px;height:8px;border-radius:50%;background:#febc2e;"></div>
+                <div style="width:8px;height:8px;border-radius:50%;background:#28c840;"></div>
+                <span style="margin-left:auto;font-size:.58rem;font-family:'IBM Plex Mono',monospace;color:var(--app-t2);border:1px solid #10b981;border-radius:100px;padding:1px 6px;display:flex;align-items:center;gap:3px;"><span style="width:4px;height:4px;border-radius:50%;background:#10b981;display:inline-block;"></span>SMTP</span>
+              </div>
+              <div style="display:flex;height:32px;">
+                <div style="width:8px;background:rgba(249,115,22,0.14);border-right:3px solid #f97316;"></div>
+                <div style="flex:1;padding:0 8px;display:flex;align-items:center;gap:5px;">
+                  <div style="width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#f97316,#fbbf24);flex-shrink:0;"></div>
+                  <div>
+                    <div style="font-size:.6rem;font-weight:700;color:var(--app-t1);">hello@everideas.co</div>
+                    <div style="font-size:.55rem;color:var(--app-t2);">Everything you've ever dreamed…</div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:2px 8px;display:flex;gap:4px;border-top:1px solid var(--app-border);">
+                <div style="font-size:.58rem;padding:2px 6px;border-bottom:2px solid #f97316;color:#f97316;font-weight:700;">HTML</div>
+                <div style="font-size:.58rem;padding:2px 6px;color:var(--app-t3);">Text</div>
+              </div>
+            </div>
+            <!-- Midnight -->
+            <div class="mini-mock" style="max-width:460px;">
+              <div style="height:28px;background:var(--app-panel);border-bottom:1px solid #6366f1;display:flex;align-items:center;padding:0 10px;gap:5px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#ff5f57;"></div>
+                <div style="width:8px;height:8px;border-radius:50%;background:#febc2e;"></div>
+                <div style="width:8px;height:8px;border-radius:50%;background:#28c840;"></div>
+                <span style="margin-left:auto;font-size:.58rem;font-family:'IBM Plex Mono',monospace;color:var(--app-t2);border:1px solid #10b981;border-radius:100px;padding:1px 6px;display:flex;align-items:center;gap:3px;"><span style="width:4px;height:4px;border-radius:50%;background:#10b981;display:inline-block;"></span>SMTP</span>
+              </div>
+              <div style="display:flex;height:32px;">
+                <div style="width:8px;background:rgba(99,102,241,0.14);border-right:3px solid #6366f1;"></div>
+                <div style="flex:1;padding:0 8px;display:flex;align-items:center;gap:5px;">
+                  <div style="width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a78bfa);flex-shrink:0;"></div>
+                  <div>
+                    <div style="font-size:.6rem;font-weight:700;color:var(--app-t1);">hello@everideas.co</div>
+                    <div style="font-size:.55rem;color:var(--app-t2);">Everything you've ever dreamed…</div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:2px 8px;display:flex;gap:4px;border-top:1px solid var(--app-border);">
+                <div style="font-size:.58rem;padding:2px 6px;border-bottom:2px solid #6366f1;color:#6366f1;font-weight:700;">HTML</div>
+                <div style="font-size:.58rem;padding:2px 6px;color:var(--app-t3);">Text</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SMTP Status -->
+      <div id="feat-smtp" class="feature-section reverse">
+        <div class="fs-visual">
+          <div class="mini-mock" style="max-width:460px;">
+            <div class="mini-titlebar" style="position:relative;">
+              <div class="mtl mtl-r"></div><div class="mtl mtl-y"></div><div class="mtl mtl-g"></div>
+              <span class="mwm">What<span class="mwm-ever">Ever</span> Mail</span>
+              <div class="msmtp"><div class="msmtp-dot"></div>SMTP :1025</div>
+            </div>
+            <div style="padding:12px 14px;background:var(--app-panel);">
+              <div style="font-size:.7rem;font-weight:700;color:var(--app-t1);margin-bottom:10px;">Settings</div>
+              <div style="font-size:.65rem;color:var(--app-t2);margin-bottom:5px;">SMTP Port</div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div style="background:var(--app-base);border:1px solid var(--app-border);border-radius:6px;padding:5px 10px;font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--app-t1);width:80px;">1025</div>
+                <div style="background:linear-gradient(135deg,#f97316,#fbbf24);color:#fff;border-radius:6px;padding:5px 12px;font-size:.65rem;font-weight:600;">Restart</div>
+              </div>
+            </div>
+            <div style="height:22px;background:var(--app-base);border-top:1px solid var(--app-border);display:flex;align-items:center;gap:12px;padding:0 12px;">
+              <div style="font-size:.6rem;color:var(--app-t3);font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:4px;"><div style="width:5px;height:5px;border-radius:50%;background:#10b981;"></div>SMTP :1025 listening</div>
+              <div style="font-size:.6rem;color:var(--app-t3);font-family:'IBM Plex Mono',monospace;">3 emails</div>
+            </div>
+          </div>
+        </div>
+        <div class="fs-text">
+          <h3>SMTP status &amp; settings</h3>
+          <p>
+            The SMTP server starts automatically when the app launches.
+            Its status is always visible in the title bar and status bar.
+          </p>
+          <ul>
+            <li>Green pill = <code>SMTP :1025</code> — server is listening</li>
+            <li>Red pill = server stopped or port conflict</li>
+            <li>Open Settings (⚙) to change the port number</li>
+            <li>Click Restart to apply the new port without restarting the app</li>
+            <li>Port setting persists across app restarts</li>
+          </ul>
+        </div>
+      </div>
+    </section><!-- /features -->
+
+    <!-- ══ FAQ ══ -->
+    <section id="faq" class="doc-section">
+      <h2 class="section-title">FAQ</h2>
+
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq1" />
+          <label class="faq-label" for="faq1">
+            Does WhatEver Mail send emails to real recipients?
+            <span class="faq-arrow">▾</span>
+          </label>
+          <div class="faq-body">
+            No. WhatEver Mail is a capture tool — it accepts SMTP connections and stores emails locally.
+            <span class="ever">Every</span> email is caught before it would ever leave your machine.
+            No emails are relayed to real addresses under any circumstances.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq2" />
+          <label class="faq-label" for="faq2">
+            What port does the SMTP server use?
+            <span class="faq-arrow">▾</span>
+          </label>
+          <div class="faq-body">
+            Default is <code>1025</code> (no root privileges needed, unlike port 25).
+            You can change it in Settings (⚙ → SMTP Port → Restart). The new port is saved and persists across restarts.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq3" />
+          <label class="faq-label" for="faq3">
+            The SMTP pill is red — what's wrong?
+            <span class="faq-arrow">▾</span>
+          </label>
+          <div class="faq-body">
+            The server couldn't bind to the port — most likely another process is already using it.
+            Try changing the port in Settings to something like <code>1026</code> or <code>2525</code>,
+            then click Restart.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq4" />
+          <label class="faq-label" for="faq4">
+            Where are emails stored?
+            <span class="faq-arrow">▾</span>
+          </label>
+          <div class="faq-body">
+            Emails are stored in a local SQLite database at your OS's app data path:
+            <ul style="margin-top:8px;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:4px;">
+              <li style="display:flex;gap:8px;font-size:.84rem;color:var(--t2);align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;">→</span>
+                <strong>macOS:</strong> <code>~/Library/Application Support/what-ever-mail/emails.db</code>
+              </li>
+              <li style="display:flex;gap:8px;font-size:.84rem;color:var(--t2);align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;">→</span>
+                <strong>Windows:</strong> <code>%APPDATA%\what-ever-mail\emails.db</code>
+              </li>
+              <li style="display:flex;gap:8px;font-size:.84rem;color:var(--t2);align-items:baseline;">
+                <span style="color:var(--accent);font-weight:700;">→</span>
+                <strong>Linux:</strong> <code>~/.config/what-ever-mail/emails.db</code>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq5" />
+          <label class="faq-label" for="faq5">
+            How do I quit on macOS? Closing the window doesn't exit.
+            <span class="faq-arrow">▾</span>
+          </label>
+          <div class="faq-body">
+            On macOS, closing the window minimises WhatEver Mail to the menu bar tray — it keeps running so it can
+            <span class="ever">ever</span> catch emails in the background. To fully quit, right-click the tray icon and choose <strong>Quit</strong>, or press <code>⌘Q</code>.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq6" />
+          <label class="faq-label" for="faq6">
+            Can I use WhatEver Mail with any language or framework?
+            <span class="faq-arrow">▾</span>
+          </label>
+          <div class="faq-body">
+            Yes. <span class="ever">Every</span> SMTP-capable library works — Node (Nodemailer), Python (smtplib, Django email backend),
+            Ruby (Action Mailer), PHP (PHPMailer, Symfony Mailer), Go, Java, and more.
+            Just point <code>host</code> at <code>localhost</code> and <code>port</code> at <code>1025</code>,
+            with authentication and TLS disabled.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<div class="doc-footer">
+  <div class="logo">What <span class="le">Ever</span> Mail</div>
+  <div>
+    <a href="index.html">Home</a> &nbsp;·&nbsp;
+    <a href="#">GitHub</a> &nbsp;·&nbsp;
+    <a href="#">Releases</a>
+  </div>
+  <div>Built for developers. 100% free, <span class="ever">ever</span>.</div>
+</div>
+
+<script>
+  document.querySelectorAll('.code-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var group = tab.parentElement;
+      var panels = group.nextElementSibling;
+      group.querySelectorAll('.code-tab').forEach(function (t) { t.classList.remove('active'); });
+      panels.querySelectorAll('.code-tab-panel').forEach(function (p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      panels.querySelector('#panel-' + tab.getAttribute('data-panel')).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

@@ -13,9 +13,9 @@ interface PreviewHeaderProps {
 }
 
 const TABS: { id: PreviewTab; label: string }[] = [
-  { id: 'html',    label: 'HTML'    },
-  { id: 'text',    label: 'Text'    },
-  { id: 'source',  label: 'Source'  },
+  { id: 'html', label: 'HTML' },
+  { id: 'text', label: 'Text' },
+  { id: 'source', label: 'Source' },
   { id: 'headers', label: 'Headers' },
 ]
 
@@ -49,8 +49,8 @@ export default function PreviewHeader({
               className="bg-transparent border-0 cursor-pointer text-fg-3 p-1 rounded-md shrink-0 transition-colors duration-150 hover:text-red-500"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
               </svg>
             </button>
           )}
@@ -60,15 +60,15 @@ export default function PreviewHeader({
           <span className="font-medium">From</span>
           <span className="text-fg-1">{email.from}</span>
           <span className="font-medium">To</span>
-          <span>{email.to.join(', ')}</span>
+          <span className="text-fg-1">{email.to.join(', ')}</span>
           {email.cc.length > 0 && (
             <>
               <span className="font-medium">Cc</span>
-              <span>{email.cc.join(', ')}</span>
+              <span className="text-fg-1">{email.cc.join(', ')}</span>
             </>
           )}
           <span className="font-medium">Date</span>
-          <span>{formatDate(email.date)}</span>
+          <span className="text-fg-1">{formatDate(email.date)}</span>
         </div>
       </div>
 
