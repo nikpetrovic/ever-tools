@@ -33,6 +33,7 @@ export default function HtmlView({ html }: HtmlViewProps): React.JSX.Element {
       <meta charset="UTF-8">
       <meta http-equiv="Content-Security-Policy"
         content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: cid:;">
+      <style>body { font-family: 'Poppins', system-ui, -apple-system, sans-serif; }</style>
       <style>${rawStyles}</style>
     </head><body>${clean}</body></html>`)
     doc.close()
