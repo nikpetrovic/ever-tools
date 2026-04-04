@@ -164,14 +164,17 @@
     }
 
     /* ─── USE CASE CARDS ─── */
-    .use-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .use-cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: stretch; margin-top: 12px; }
     .use-case {
-      padding: 20px; border-radius: 10px; border: 1px solid var(--border);
+      padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border);
       background: var(--bg-soft);
+      display: flex; flex-direction: column;
+      height: 100%; box-sizing: border-box;
     }
-    .use-case-icon { font-size: 1.4rem; margin-bottom: 10px; }
-    .use-case h4 { font-size: 0.88rem; font-weight: 700; color: var(--t1); margin-bottom: 5px; }
-    .use-case p  { font-size: 0.78rem; color: var(--t2); line-height: 1.5; }
+    .use-case-header { display: flex; align-items: center; gap: 6px; }
+    .use-case-icon { font-size: 0.82rem; margin-left: auto; line-height: 1; flex-shrink: 0; }
+    .use-case h4 { font-size: 0.88rem; font-weight: 700; color: var(--t1); margin: 0; }
+    .use-case p  { font-size: 0.78rem; color: var(--t2); line-height: 1.5; margin-top: 8px; }
 
     /* ─── STEPS ─── */
     .steps { display: flex; flex-direction: column; gap: 0; }
@@ -192,7 +195,7 @@
       background: linear-gradient(to bottom, rgba(249,115,22,0.3), transparent);
     }
     .step:last-child .step-line { display: none; }
-    .step-content { padding-top: 6px; }
+    .step-content { padding-top: 6px; min-width: 0; }
     .step-content h4 { font-size: 1rem; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
     .step-content p  { font-size: 0.85rem; color: var(--t2); line-height: 1.6; margin-bottom: 12px; }
 
@@ -228,7 +231,7 @@
       text-align: center; background: var(--bg-soft);
       text-decoration: none; color: inherit;
       transition: transform .2s, box-shadow .2s, border-color .2s;
-      cursor: pointer;
+      cursor: pointer; position: relative;
     }
     .platform-card:hover {
       transform: translateY(-4px);
@@ -237,8 +240,9 @@
     }
     .platform-card .pc-icon { width: 32px; height: 32px; margin-bottom: 10px; color: var(--t2); }
     .platform-card:hover .pc-icon { color: var(--accent); }
-    .platform-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+    .platform-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--t1); margin-bottom: 0; }
     .platform-card .pc-label {
+      position: absolute; bottom: 10px; left: 0; right: 0; text-align: center;
       font-size: 0.78rem; color: var(--accent); font-weight: 600;
       opacity: 0; transform: translateY(4px);
       transition: opacity .2s, transform .2s;
@@ -258,8 +262,8 @@
     .fs-text h3 { font-size: 1.1rem; font-weight: 700; color: var(--t1); margin-bottom: 8px; }
     .fs-text p  { font-size: 0.87rem; color: var(--t2); line-height: 1.7; margin-bottom: 14px; }
     .fs-text ul { padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
-    .fs-text li { font-size: 0.84rem; color: var(--t2); display: flex; gap: 8px; align-items: baseline; }
-    .fs-text li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .fs-text li { font-size: 0.84rem; color: var(--t2); display: flex; gap: 8px; align-items: flex-start; }
+    .fs-text li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; line-height: 1.5; }
 
     /* ─── MINI APP MOCKUP (used in feature sections) ─── */
     .mini-mock {
@@ -478,7 +482,10 @@
       .platform-card { padding: 16px 10px; }
       .platform-card .pc-icon { width: 24px; height: 24px; margin-bottom: 6px; }
       .platform-card h4 { font-size: 0.78rem; }
-      .use-cases { grid-template-columns: 1fr; }
+      .use-cases { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .use-case { padding: 12px; }
+      .use-case h4 { font-size: 0.78rem; }
+      .use-case p { font-size: 0.7rem; }
       .overview-hero { padding: 24px; }
       .overview-hero h3 { font-size: 1.1rem; }
       .theme-swatches { gap: 6px; }
@@ -571,18 +578,24 @@
 
       <div class="use-cases">
         <div class="use-case">
-          <div class="use-case-icon">🧪</div>
-          <h4>Test email flows</h4>
+          <div class="use-case-header">
+            <h4>Test email flows</h4>
+            <div class="use-case-icon">🧪</div>
+          </div>
           <p>Send password resets, notifications, or receipts — catch them all without leaving your machine.</p>
         </div>
         <div class="use-case">
-          <div class="use-case-icon">🔍</div>
-          <h4>Debug templates</h4>
+          <div class="use-case-header">
+            <h4>Debug templates</h4>
+            <div class="use-case-icon">🔍</div>
+          </div>
           <p>Inspect HTML rendering, check headers, and view raw source side by side.</p>
         </div>
         <div class="use-case">
-          <div class="use-case-icon">🚀</div>
-          <h4>Ship with confidence</h4>
+          <div class="use-case-header">
+            <h4>Ship with confidence</h4>
+            <div class="use-case-icon">🚀</div>
+          </div>
           <p>Verify <span class="ever">every</span> email looks right before it reaches a real inbox.</p>
         </div>
       </div>
@@ -942,8 +955,8 @@ and <span style="color:#f97316;font-weight:500;">every</span> email lands right 
           </p>
           <ul>
             <li>Click the trash icon in the preview header to delete an email</li>
-            <li><code>Delete</code> key (or <code>⌘+Backspace</code> on macOS) deletes the selected email</li>
-            <li>Multi-select with <code>⌘/Ctrl+Click</code> or <code>Shift+Click</code></li>
+            <li><span><code>Delete</code> key (or <code>⌘+Backspace</code> on macOS) deletes the selected email</span></li>
+            <li><span>Multi-select with <code>⌘/Ctrl+Click</code> or <code>Shift+Click</code></span></li>
             <li>Restore emails from Trash back to Inbox any time</li>
             <li>Trash view shows emails older than 15 days will auto-delete</li>
           </ul>
