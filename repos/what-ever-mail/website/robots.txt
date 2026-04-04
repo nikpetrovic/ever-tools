@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://website-two-flax-27.vercel.app/sitemap.xml
+Sitemap: https://WhatEver-Mail.eversoft.space/sitemap.xml
