@@ -47,9 +47,12 @@ export function registerIpcHandlers(mainWindow?: BrowserWindow): void {
 
   ipcMain.handle(IPC.SMTP_STATUS, () => getSmtpStatus())
 
-  ipcMain.handle(IPC.SMTP_RESTART, (_event, port: number) => {
+  ipcMain.handle(IPC.SMTP_RESTART, async (_event, port: number, host: string) => {
     setSetting('smtpPort', port)
-    if (mainWindow) restartSmtpServer(port, mainWindow)
+    setSetting('smtpHost', host)
+    if (mainWindow) restartSmtpServer(port, host, mainWindow)
+    // Wait briefly for the async error event to fire before returning
+    await new Promise<void>((resolve) => setTimeout(resolve, 300))
   })
 
   ipcMain.handle(IPC.SMTP_STOP, () => {

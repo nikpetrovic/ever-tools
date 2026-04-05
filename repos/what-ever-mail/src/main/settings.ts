@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
 
 interface Settings {
   smtpPort: number
+  smtpHost: string
   theme: 'ember' | 'midnight' | 'jade' | 'rose' | 'azure'
   windowBounds: { x: number; y: number; width: number; height: number } | null
   startAtLogin: boolean
@@ -12,6 +13,7 @@ interface Settings {
 
 const defaults: Settings = {
   smtpPort: 1025,
+  smtpHost: '127.0.0.1',
   theme: 'ember',
   windowBounds: null,
   startAtLogin: false,

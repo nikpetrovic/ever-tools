@@ -6,14 +6,18 @@ import { IPC } from '../ipc/channels'
 
 let smtpServer: SMTPServer | null = null
 let currentPort = 1025
+let currentHost = '127.0.0.1'
 let isRunning = false
+let lastError: string | null = null
 
-export function startSmtpServer(port: number, mainWindow: BrowserWindow): void {
+export function startSmtpServer(port: number, host: string, mainWindow: BrowserWindow): void {
   if (smtpServer) {
     stopSmtpServer()
   }
 
   currentPort = port
+  currentHost = host
+  lastError = null
 
   smtpServer = new SMTPServer({
     authOptional: true,
@@ -43,13 +47,15 @@ export function startSmtpServer(port: number, mainWindow: BrowserWindow): void {
     },
   })
 
-  smtpServer.listen(port, '127.0.0.1', () => {
+  smtpServer.listen(port, host, () => {
     isRunning = true
-    console.log(`SMTP server listening on port ${port}`)
+    lastError = null
+    console.log(`SMTP server listening on ${host}:${port}`)
   })
 
   smtpServer.on('error', (err) => {
     isRunning = false
+    lastError = err.message
     console.error('SMTP server failed to start:', err)
   })
 }
@@ -63,10 +69,10 @@ export function stopSmtpServer(): void {
   }
 }
 
-export function restartSmtpServer(port: number, mainWindow: BrowserWindow): void {
-  startSmtpServer(port, mainWindow)
+export function restartSmtpServer(port: number, host: string, mainWindow: BrowserWindow): void {
+  startSmtpServer(port, host, mainWindow)
 }
 
-export function getSmtpStatus(): { running: boolean; port: number } {
-  return { running: isRunning, port: currentPort }
+export function getSmtpStatus(): { running: boolean; port: number; host: string; error: string | null } {
+  return { running: isRunning, port: currentPort, host: currentHost, error: lastError }
 }

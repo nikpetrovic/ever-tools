@@ -121,10 +121,10 @@ app.whenReady().then(() => {
     // reservation (observed on Windows only).
     mainWindow.once('ready-to-show', () => {
       if (mainWindow) {
-        startSmtpServer(getSetting('smtpPort'), mainWindow)
+        startSmtpServer(getSetting('smtpPort'), getSetting('smtpHost'), mainWindow)
         setTimeout(() => {
           if (!getSmtpStatus().running && mainWindow) {
-            startSmtpServer(getSetting('smtpPort'), mainWindow)
+            startSmtpServer(getSetting('smtpPort'), getSetting('smtpHost'), mainWindow)
           }
         }, 2000)
       }
