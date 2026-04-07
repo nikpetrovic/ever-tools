@@ -1172,6 +1172,21 @@ and <span style="color:#f97316;font-weight:500;">every</span> email lands right 
           </div>
         </div>
 
+        <div class="faq-item">
+          <input type="checkbox" id="faq7" />
+          <label class="faq-label" for="faq7">
+            macOS says the app is damaged or from an unidentified developer — how do I fix it?
+            <span class="faq-arrow">▾</span>
+          </label>
+          <div class="faq-body">
+            macOS quarantines apps downloaded from the internet. The quickest fix is to right-click the app and choose <strong>Open</strong> — this lets you bypass the warning once.
+            <br><br>
+            If the app still won't open, remove the quarantine flag from Terminal:
+            <pre style="margin:10px 0 6px;padding:10px 14px;background:var(--app-base);border-radius:8px;font-size:0.8rem;overflow-x:auto;"><code>xattr -r -d com.apple.quarantine /Applications/WhatEver\ Mail.app</code></pre>
+            Replace <code>/Applications/WhatEver\ Mail.app</code> with the actual path if you placed the app elsewhere.
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -1196,6 +1211,25 @@ and <span style="color:#f97316;font-weight:500;">every</span> email lands right 
       panels.querySelector('#panel-' + tab.getAttribute('data-panel')).classList.add('active');
     });
   });
+
+  /* ─── FAQ deep-link: open accordion from URL hash ─── */
+  (function () {
+    function openFaqFromHash(hash) {
+      if (!hash) return;
+      var checkbox = document.getElementById(hash.slice(1));
+      if (checkbox && checkbox.type === 'checkbox') {
+        checkbox.checked = true;
+        var item = checkbox.closest('.faq-item') || checkbox.parentElement;
+        if (item) item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    window.addEventListener('load', function () {
+      openFaqFromHash(window.location.hash);
+    });
+    window.addEventListener('hashchange', function () {
+      openFaqFromHash(window.location.hash);
+    });
+  })();
 
   /* ─── Scroll spy ─── */
   (function () {
