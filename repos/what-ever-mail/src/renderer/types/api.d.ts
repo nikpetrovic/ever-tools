@@ -33,6 +33,13 @@ declare global {
         close: () => Promise<void>
         onMaximizedChange: (cb: (isMaximized: boolean) => void) => () => void
       }
+      payment: {
+        markDonated: () => Promise<void>
+      }
+      shell: {
+        openExternal: (url: string) => Promise<void>
+      }
+      onSettingsInvalidate: (cb: () => void) => () => void
     }
   }
 }

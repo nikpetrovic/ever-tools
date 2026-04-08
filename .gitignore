@@ -15,3 +15,5 @@ repos/*/*.log
 # OS
 .DS_Store
 *.log
+
+.env*

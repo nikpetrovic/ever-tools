@@ -19,6 +19,7 @@ export const IPC = {
   WINDOW_MAXIMIZE_TOGGLE:  'window:maximizeToggle',
   WINDOW_CLOSE:            'window:close',
   WINDOW_MAXIMIZED_CHANGE: 'window:maximizedChange',
+  PAYMENT_SUCCESS:         'payment:success',
 } as const
 
 export type IpcChannel = (typeof IPC)[keyof typeof IPC]

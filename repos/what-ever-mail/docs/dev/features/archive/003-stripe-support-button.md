@@ -1,10 +1,10 @@
-# Stripe Support Button Implementation Plan
+# PayPal Support Button Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a "Support my work" button that links to Stripe, shown in the sidebar (until user donates) and permanently in the Settings panel, with donation state tracked locally via a custom URL protocol.
+**Goal:** Add a "Support my work" button that links to PayPal, shown in the sidebar (until user donates) and permanently in the Settings panel, with donation state tracked locally via a custom URL protocol.
 
-**Architecture:** A config constant holds the Stripe URL and a dev-time toggle. Donation state is persisted in `settings.json` as `hasDonated: boolean`. When the user completes a Stripe payment, Stripe redirects to `whatevermail://payment-success`; Electron's custom protocol handler intercepts this deep link and flips `hasDonated: true`. The sidebar button disappears once donated; the Settings panel button stays forever.
+**Architecture:** The PayPal donation URL is read from `src/renderer/config.ts`. A dev-time toggle controls visibility. Donation state is persisted in `settings.json` as `hasDonated: boolean`. When the user completes a PayPal payment, PayPal redirects to `whatevermail://payment-success`; Electron's custom protocol handler intercepts this deep link and flips `hasDonated: true`. The sidebar button disappears once donated; the Settings panel button stays forever.
 
 **Tech Stack:** Electron (custom protocol), React (conditional rendering), existing `settings.ts` + `useSettings` hook, Tailwind CSS.
 
@@ -14,7 +14,7 @@
 
 | File | Action | Responsibility |
 |------|--------|---------------|
-| `src/renderer/config.ts` | **Create** | `STRIPE_PAYMENT_URL` constant + `SHOW_SUPPORT_BUTTON` dev toggle |
+| `src/renderer/config.ts` | **Create** | `PAYPAL_DONATION_URL` constant + `SHOW_SUPPORT_BUTTON` dev toggle |
 | `src/main/settings.ts` | **Modify** | Add `hasDonated: boolean` to `Settings` interface + default |
 | `src/main/ipc/channels.ts` | **Modify** | Add `PAYMENT_SUCCESS` IPC channel |
 | `src/main/ipc/handlers.ts` | **Modify** | Handle `PAYMENT_SUCCESS` → set `hasDonated: true` |
@@ -30,7 +30,7 @@
 ## Task 1: Add config constants
 
 **Files:**
-- Create: `repos/what-ever-mail/src/renderer/config.ts`
+- Create: `src/renderer/config.ts`
 
 - [ ] **Step 1: Create the config file**
 
@@ -41,19 +41,19 @@
 export const SHOW_SUPPORT_BUTTON = true
 
 /**
- * Your Stripe Payment Link URL.
- * Replace with your actual link from https://dashboard.stripe.com/payment-links
- * Add ?success_url=whatevermail%3A%2F%2Fpayment-success to the Stripe link
+ * Your PayPal Donation URL.
+ * Create at https://www.paypal.com/donate/buttons
+ * Set the "Return URL" to whatevermail://payment-success
  * so Electron can intercept the completion.
  */
-export const STRIPE_PAYMENT_URL = 'https://buy.stripe.com/YOUR_LINK_HERE'
+export const PAYPAL_DONATION_URL = 'https://www.paypal.com/ncp/payment/H9YRN48YJAR8E'
 ```
 
 - [ ] **Step 2: Commit**
 
 ```bash
-git add repos/what-ever-mail/src/renderer/config.ts
-git commit -m "feat: add Stripe config constants"
+git add src/renderer/config.ts
+git commit -m "feat: add PayPal config constants"
 ```
 
 ---
@@ -61,11 +61,11 @@ git commit -m "feat: add Stripe config constants"
 ## Task 2: Extend settings with `hasDonated`
 
 **Files:**
-- Modify: `repos/what-ever-mail/src/main/settings.ts`
+- Modify: `src/main/settings.ts`
 
 - [ ] **Step 1: Read the current file**
 
-Open `repos/what-ever-mail/src/main/settings.ts` and confirm the `Settings` interface and `defaultSettings` object.
+Open `src/main/settings.ts` and confirm the `Settings` interface and `defaultSettings` object.
 
 - [ ] **Step 2: Add `hasDonated` to the interface and defaults**
 
@@ -98,7 +98,7 @@ const defaultSettings: Settings = {
 - [ ] **Step 3: Commit**
 
 ```bash
-git add repos/what-ever-mail/src/main/settings.ts
+git add src/main/settings.ts
 git commit -m "feat: add hasDonated to settings schema"
 ```
 
@@ -107,9 +107,9 @@ git commit -m "feat: add hasDonated to settings schema"
 ## Task 3: IPC channel for marking donation
 
 **Files:**
-- Modify: `repos/what-ever-mail/src/main/ipc/channels.ts`
-- Modify: `repos/what-ever-mail/src/main/ipc/handlers.ts`
-- Modify: `repos/what-ever-mail/src/preload/index.ts`
+- Modify: `src/main/ipc/channels.ts`
+- Modify: `src/main/ipc/handlers.ts`
+- Modify: `src/preload/index.ts`
 
 - [ ] **Step 1: Add the channel constant**
 
@@ -152,9 +152,9 @@ payment: {
 - [ ] **Step 5: Commit**
 
 ```bash
-git add repos/what-ever-mail/src/main/ipc/channels.ts \
-        repos/what-ever-mail/src/main/ipc/handlers.ts \
-        repos/what-ever-mail/src/preload/index.ts
+git add src/main/ipc/channels.ts \
+        src/main/ipc/handlers.ts \
+        src/preload/index.ts
 git commit -m "feat: add payment:success IPC channel"
 ```
 
@@ -163,11 +163,11 @@ git commit -m "feat: add payment:success IPC channel"
 ## Task 4: Register custom URL protocol handler
 
 **Files:**
-- Create: `repos/what-ever-mail/src/main/protocol.ts`
-- Modify: `repos/what-ever-mail/src/main/index.ts`
-- Modify: `repos/what-ever-mail/src/preload/index.ts`
-- Modify: `repos/what-ever-mail/src/renderer/hooks/useSettings.ts`
-- Modify: `repos/what-ever-mail/src/renderer/App.tsx`
+- Create: `src/main/protocol.ts`
+- Modify: `src/main/index.ts`
+- Modify: `src/preload/index.ts`
+- Modify: `src/renderer/hooks/useSettings.ts`
+- Modify: `src/renderer/App.tsx`
 
 - [ ] **Step 1: Create protocol.ts**
 
@@ -207,6 +207,8 @@ function handleDeepLink(url: string, getWindow: () => BrowserWindow | null): voi
 ```
 
 > **Note on Windows:** `setAsDefaultProtocolClient` requires the app to be packaged. During dev on Windows, test by calling `window.api.payment.markDonated()` in DevTools console.
+
+> **PayPal note:** Set the "Return URL" in your PayPal donation button settings to `whatevermail://payment-success` so Electron intercepts the redirect after payment.
 
 - [ ] **Step 2: Wire protocol into main/index.ts**
 
@@ -271,11 +273,11 @@ export default function App(): React.JSX.Element {
 - [ ] **Step 6: Commit**
 
 ```bash
-git add repos/what-ever-mail/src/main/protocol.ts \
-        repos/what-ever-mail/src/main/index.ts \
-        repos/what-ever-mail/src/preload/index.ts \
-        repos/what-ever-mail/src/renderer/hooks/useSettings.ts \
-        repos/what-ever-mail/src/renderer/App.tsx
+git add src/main/protocol.ts \
+        src/main/index.ts \
+        src/preload/index.ts \
+        src/renderer/hooks/useSettings.ts \
+        src/renderer/App.tsx
 git commit -m "feat: register whatevermail:// protocol for payment callback"
 ```
 
@@ -284,8 +286,8 @@ git commit -m "feat: register whatevermail:// protocol for payment callback"
 ## Task 5: SupportButton component
 
 **Files:**
-- Create: `repos/what-ever-mail/src/renderer/components/SupportButton.tsx`
-- Modify: `repos/what-ever-mail/src/preload/index.ts`
+- Create: `src/renderer/components/SupportButton.tsx`
+- Modify: `src/preload/index.ts`
 
 - [ ] **Step 1: Expose shell.openExternal via preload**
 
@@ -312,7 +314,7 @@ shell: {
 ```tsx
 // src/renderer/components/SupportButton.tsx
 import React from 'react'
-import { STRIPE_PAYMENT_URL } from '../config'
+import { PAYPAL_DONATION_URL } from '../config'
 
 interface SupportButtonProps {
   variant?: 'sidebar' | 'settings'
@@ -320,7 +322,7 @@ interface SupportButtonProps {
 
 export function SupportButton({ variant = 'sidebar' }: SupportButtonProps): React.JSX.Element {
   const handleClick = (): void => {
-    window.api.shell.openExternal(STRIPE_PAYMENT_URL)
+    window.api.shell.openExternal(PAYPAL_DONATION_URL)
   }
 
   if (variant === 'settings') {
@@ -348,8 +350,8 @@ export function SupportButton({ variant = 'sidebar' }: SupportButtonProps): Reac
 - [ ] **Step 3: Commit**
 
 ```bash
-git add repos/what-ever-mail/src/renderer/components/SupportButton.tsx \
-        repos/what-ever-mail/src/preload/index.ts
+git add src/renderer/components/SupportButton.tsx \
+        src/preload/index.ts
 git commit -m "feat: add SupportButton component"
 ```
 
@@ -358,7 +360,7 @@ git commit -m "feat: add SupportButton component"
 ## Task 6: Add button to Sidebar (above ThemePicker)
 
 **Files:**
-- Modify: `repos/what-ever-mail/src/renderer/components/Sidebar.tsx`
+- Modify: `src/renderer/components/Sidebar.tsx`
 
 - [ ] **Step 1: Read Sidebar.tsx** — confirm where `<ThemePicker />` is rendered.
 
@@ -385,13 +387,13 @@ const { value: hasDonated } = useSetting('hasDonated')
 
 - [ ] **Step 3: Verify**
 
-Run: `npm run dev` in `repos/what-ever-mail/`
+Run: `npm run dev`
 Expected: Sidebar shows "♥ Support my work" above the theme colour dots. No console errors.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add repos/what-ever-mail/src/renderer/components/Sidebar.tsx
+git add src/renderer/components/Sidebar.tsx
 git commit -m "feat: show Support button in sidebar when not donated"
 ```
 
@@ -400,7 +402,7 @@ git commit -m "feat: show Support button in sidebar when not donated"
 ## Task 7: Add permanent link to Settings panel
 
 **Files:**
-- Modify: `repos/what-ever-mail/src/renderer/components/SettingsPanel.tsx`
+- Modify: `src/renderer/components/SettingsPanel.tsx`
 
 - [ ] **Step 1: Read SettingsPanel.tsx** — find the closing tag of the settings form content.
 
@@ -424,12 +426,12 @@ At the bottom of the panel content (before the closing tag):
 - [ ] **Step 3: Verify**
 
 Run: `npm run dev`
-Open Settings (gear icon). Expected: "♥ Support my work →" appears at the bottom. Clicking opens Stripe URL in default browser.
+Open Settings (gear icon). Expected: "♥ Support my work →" appears at the bottom. Clicking opens PayPal URL in default browser.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add repos/what-ever-mail/src/renderer/components/SettingsPanel.tsx
+git add src/renderer/components/SettingsPanel.tsx
 git commit -m "feat: add permanent Support link in Settings panel"
 ```
 
@@ -459,20 +461,17 @@ In `src/renderer/config.ts`, set `SHOW_SUPPORT_BUTTON = false`. Run dev. Expecte
 
 - [ ] **Step 5: TypeScript check**
 
-Run: `npm run typecheck` in `repos/what-ever-mail/`
+Run: `npm run typecheck`
 Expected: No errors.
 
 ---
 
-## Stripe Dashboard Setup (manual — outside codebase)
+## PayPal Dashboard Setup (manual — outside codebase)
 
-1. Go to Stripe Dashboard → Payment Links
-2. Create or edit your payment link
-3. In **After payment** settings, set the confirmation redirect URL to:
-   ```
-   whatevermail://payment-success
-   ```
-4. Copy the link URL into `src/renderer/config.ts` as `STRIPE_PAYMENT_URL`
+1. Go to **paypal.com/donate/buttons** → Create a donation button
+2. Set preset amounts: 5, 10, 20
+3. In **Return URL / Success URL**, set: `whatevermail://payment-success`
+4. Copy the generated button URL into `src/renderer/config.ts` as `PAYPAL_DONATION_URL`
 
 ---
 
@@ -481,7 +480,7 @@ Expected: No errors.
 - [ ] `SHOW_SUPPORT_BUTTON = false` hides button everywhere
 - [ ] `hasDonated = false` → button visible in sidebar + settings
 - [ ] `hasDonated = true` → button only in settings panel
-- [ ] Button click opens Stripe URL in external browser
+- [ ] Button click opens PayPal URL in external browser
 - [ ] `markDonated()` via DevTools console removes sidebar button immediately
 - [ ] `hasDonated` persists across app restarts
 - [ ] `npm run typecheck` passes with no errors

@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, shell } from 'electron'
 import { IPC } from '../main/ipc/channels'
 import type { EmailRecord } from '../renderer/types/email'
 
@@ -46,5 +46,19 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.on(IPC.WINDOW_MAXIMIZED_CHANGE, listener)
       return () => ipcRenderer.off(IPC.WINDOW_MAXIMIZED_CHANGE, listener)
     },
+  },
+
+  payment: {
+    markDonated: (): Promise<void> => ipcRenderer.invoke(IPC.PAYMENT_SUCCESS),
+  },
+
+  shell: {
+    openExternal: (url: string): Promise<void> => shell.openExternal(url),
+  },
+
+  onSettingsInvalidate: (cb: () => void): (() => void) => {
+    const handler = (): void => cb()
+    ipcRenderer.on('settings:invalidate', handler)
+    return () => { ipcRenderer.removeListener('settings:invalidate', handler) }
   },
 })

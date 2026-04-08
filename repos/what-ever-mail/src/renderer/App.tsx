@@ -8,12 +8,14 @@ import Preview from './components/Preview/Preview'
 import { useUiStore } from './store/ui'
 import { useEmails } from './hooks/useEmails'
 import SettingsPanel from './components/SettingsPanel'
+import { useSettingsSync } from './hooks/useSettings'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: Infinity } },
 })
 
 function AppInner(): React.JSX.Element {
+  useSettingsSync()
   const { selectedEmailId, navItem, searchQuery, selectEmail, navigate, setSearchQuery } = useUiStore()
   const { emails } = useEmails()
   const [settingsOpen, setSettingsOpen] = useState(false)

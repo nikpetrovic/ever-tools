@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import clsx from 'clsx'
 import { useClearEmails } from '../hooks/useEmails'
+import { SupportButton } from './SupportButton'
+import { SHOW_SUPPORT_BUTTON } from '../config'
 
 interface SettingsPanelProps {
   onClose: () => void
@@ -143,6 +145,15 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps): React.JS
               Clear all emails
             </button>
           </Section>
+
+          {SHOW_SUPPORT_BUTTON && (
+            <>
+              <div className="border-t border-border my-4" />
+              <Section label="Support">
+                <SupportButton variant="settings" />
+              </Section>
+            </>
+          )}
         </div>
       </div>
     </div>

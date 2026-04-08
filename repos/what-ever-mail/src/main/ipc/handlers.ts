@@ -79,4 +79,8 @@ export function registerIpcHandlers(mainWindow?: BrowserWindow): void {
   ipcMain.handle(IPC.WINDOW_CLOSE, () => {
     mainWindow?.close()
   })
+
+  ipcMain.handle(IPC.PAYMENT_SUCCESS, () => {
+    setSetting('hasDonated', true)
+  })
 }

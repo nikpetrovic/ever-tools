@@ -3,6 +3,9 @@ import clsx from 'clsx'
 import type { NavItem } from '../store/ui'
 import type { EmailRecord } from '../types/email'
 import ThemePicker from './ThemePicker'
+import { SupportButton } from './SupportButton'
+import { useSetting } from '../hooks/useSettings'
+import { SHOW_SUPPORT_BUTTON } from '../config'
 
 interface SidebarProps {
   navItem: NavItem
@@ -13,6 +16,7 @@ interface SidebarProps {
 export default function Sidebar({ navItem, emails, onNavigate }: SidebarProps): React.JSX.Element {
   const unreadCount = emails.filter((e) => !e.read && e.deletedAt === null).length
   const trashUnreadCount = emails.filter((e) => !e.read && e.deletedAt !== null).length
+  const { value: hasDonated } = useSetting<boolean>('hasDonated')
 
   return (
     <aside className="w-[176px] bg-surface-base border-r border-border flex flex-col py-3 px-2 shrink-0 gap-[2px]">
@@ -44,6 +48,11 @@ export default function Sidebar({ navItem, emails, onNavigate }: SidebarProps): 
       <div className="flex-1" />
 
       <div>
+        {SHOW_SUPPORT_BUTTON && !hasDonated && (
+          <div className="px-1 mb-2">
+            <SupportButton variant="sidebar" />
+          </div>
+        )}
         <div className="border-t border-border mx-[2px]" />
         <p className="m-0 mb-3 pt-4 text-[16px] font-semibold text-fg-3 uppercase tracking-[0.16em] text-center">
           Theme

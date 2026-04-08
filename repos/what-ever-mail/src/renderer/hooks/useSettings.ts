@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 export function useSetting<T>(key: string): { value: T | undefined; set: (v: T) => void } {
   const queryClient = useQueryClient()
@@ -16,4 +17,13 @@ export function useSetting<T>(key: string): { value: T | undefined; set: (v: T) 
   })
 
   return { value, set: (v) => mutation.mutate(v) }
+}
+
+export function useSettingsSync(): void {
+  const queryClient = useQueryClient()
+  useEffect(() => {
+    return window.api.onSettingsInvalidate(() => {
+      queryClient.invalidateQueries({ queryKey: ['settings'] })
+    })
+  }, [queryClient])
 }

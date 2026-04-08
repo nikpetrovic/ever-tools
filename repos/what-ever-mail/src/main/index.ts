@@ -1,4 +1,5 @@
 import { app, BrowserWindow, Menu, shell, nativeImage, screen } from 'electron'
+import { registerProtocol } from './protocol'
 import { join } from 'path'
 import { registerIpcHandlers } from './ipc/handlers'
 import { startSmtpServer, stopSmtpServer, getSmtpStatus } from './smtp/server'
@@ -89,6 +90,8 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+registerProtocol(() => mainWindow)
 
 app.whenReady().then(() => {
   // Set dock icon explicitly — fixes "Electron" default shown in dev mode

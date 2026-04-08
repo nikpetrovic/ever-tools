@@ -9,6 +9,7 @@ interface Settings {
   windowBounds: { x: number; y: number; width: number; height: number } | null
   startAtLogin: boolean
   lastLoadedBundleId: string | null
+  hasDonated: boolean
 }
 
 const defaults: Settings = {
@@ -18,6 +19,7 @@ const defaults: Settings = {
   windowBounds: null,
   startAtLogin: false,
   lastLoadedBundleId: null,
+  hasDonated: false,
 }
 
 function getSettingsPath(): string {
