@@ -2,17 +2,17 @@
   "siteUrl": "https://WhatEver-Mail.eversoft.space",
   "downloads": {
     "mac": {
-      "universal": "https://1drv.ms/u/c/1ae7befaa8480e50/IQTFhrXYKWvhRbgu4sMnJxl9AQF6MvjjGLhSrJznwSMUEik",
-      "silicon": "https://1drv.ms/u/c/1ae7befaa8480e50/IQSuZEDvZwRvTr66gguD0nqkAURjCR4grePYUJmT2SBF0dM",
-      "intel": "https://1drv.ms/u/c/1ae7befaa8480e50/IQQ70FDj_DfiTqGAuWfnT5hFAUHN52Dfw6G8BbXgvQa6f2g"
+      "universal": "https://1drv.ms/u/c/1ae7befaa8480e50/IQSJEFkn9M0qTY0F7G3bY-I-Acy2gmBIiiNyp9UC4Hagb6o",
+      "silicon": "https://1drv.ms/u/c/1ae7befaa8480e50/IQRU1pDA2J9RQazRJWpg4QBmAXZux66vnkPqO7xRplXJAFs",
+      "intel": "https://1drv.ms/u/c/1ae7befaa8480e50/IQRVkuedDP_RT7AYZf3S5zSMAbNOThc8Oo8hJ1gvpAHqdKw"
     },
     "win": {
-      "installer": "https://1drv.ms/u/c/1ae7befaa8480e50/IQS46sG49_UCTIWsUxHuyj0UAW4ENN-4fkQsdTkxRMK-AQc",
-      "zip": "https://1drv.ms/u/c/1ae7befaa8480e50/IQByy5kIuccpSZrOH_CFQ-99AUBDrHKeuudmUQjyOWh0lkc?e=hcxoAS"
+      "installer": "https://1drv.ms/u/c/1ae7befaa8480e50/IQTAI8c69dMiQom9FHaiAStlAfBqvHUqM8ASMxqZkIcZZ5I",
+      "zip": "https://1drv.ms/u/c/1ae7befaa8480e50/IQDJZ6ELlIUTTKhWF_nP22p9Aab8tcI0rzyjMqEUAY2V3ZI?e=H8iIol"
     },
     "linux": {
-      "appimage": "https://1drv.ms/u/c/1ae7befaa8480e50/IQQSXgB9AukcS6nRXFQseyZuAW1VAAF2ajr3NMPVUnudG-0",
-      "deb": "https://1drv.ms/u/c/1ae7befaa8480e50/IQQgdZ54zHW1QZe7x8e8GVM5AbZDMmnvEUHHki1e0y4eQFk"
+      "appimage": "https://1drv.ms/u/c/1ae7befaa8480e50/IQQOaUvKvoeTTIIKjVBerEcsAUYqJsHXm7-OYscaBj3PSLY",
+      "deb": "https://1drv.ms/u/c/1ae7befaa8480e50/IQQ-HUyhQHQWTKtabe-JxZBNAQrH3mRdiLCgPeQyi5_Gdpw"
     }
   }
 }
